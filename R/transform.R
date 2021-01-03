@@ -31,6 +31,8 @@
 #'       \item "1/x" : 1 / x transformation
 #'       \item "x^2" : x square transformation
 #'       \item "x^3" : x^3 square transformation
+#'       \item "Box-Cox" : Box-Box transformation
+#'       \item "Yeo-Johnson" : Yeo-Johnson transformation
 #'     }
 #'   }
 #' }
@@ -63,8 +65,10 @@
 #' @import tibble
 #' @importFrom methods is
 #' @importFrom stats sd
+#' @importFrom forecast BoxCox.lambda BoxCox
+#'  
 transform <- function(x, method = c("zscore", "minmax", "log", "log+1", "sqrt",
-  "1/x", "x^2", "x^3")) {
+  "1/x", "x^2", "x^3", "Box-Cox", "Yeo-Johnson")) {
   method <- match.arg(method)
 
   if (!is(x)[1] %in% c("integer", "numeric")) {
@@ -78,6 +82,19 @@ transform <- function(x, method = c("zscore", "minmax", "log", "log+1", "sqrt",
   get_minmax <- function(x) {
     (x - min(x, na.rm = TRUE)) / diff(range(x, na.rm = TRUE))
   }
+  
+  get_boxcox <- function(x) {
+    forecast::BoxCox(x, lambda = "auto")
+  }  
+  
+  get_yjohnson <- function(x) {
+    lambda <- forecast::BoxCox.lambda(x)
+    lambda <- rep(lambda, length(x))
+    
+    ifelse(x >= 0, ifelse(lambda != 0, ((x + 1) ^ lambda - 1) / lambda, log(x + 1)),
+                   ifelse(lambda != 2, -((-1 * x + 1) ^ (2 - lambda) - 1) / (2 - lambda),
+                          -1 * log(x + 1)))
+  }    
 
   if (method == "zscore")
     result <- get_zscore(x)
@@ -95,7 +112,11 @@ transform <- function(x, method = c("zscore", "minmax", "log", "log+1", "sqrt",
     result <- x^2
   else if (method == "x^3")
     result <- x^3
-
+  else if (method == "Box-Cox") 
+    result <- get_boxcox(x)
+  else if (method == "Yeo-Johnson") 
+    result <- get_yjohnson(x)
+    
   attr(result, "method") <- method
   attr(result, "origin") <- x
 
@@ -110,9 +131,9 @@ transform <- function(x, method = c("zscore", "minmax", "log", "log+1", "sqrt",
 #' @param object an object of class "transform", usually, a result of a call to transform().
 #' @param ... further arguments passed to or from other methods.
 #' @details
-#' summary.transform compares the distribution of data before and after data conversion.
+#' summary.transform compares the distribution of data before and after data transformation.
 #'
-#' @seealso \code{\link{transform}}, \code{\link{summary.transform}}.
+#' @seealso \code{\link{transform}}, \code{\link{plot.transform}}.
 #' @examples
 #' # Generate data for the example
 #' carseats <- ISLR::Carseats
@@ -151,7 +172,8 @@ summary.transform <- function(object, ...) {
 
   if (method %in% c("zscore", "minmax")) {
     cat(sprintf("* Standardization with %s\n\n", method))
-  } else if (method %in% c("log", "log+1", "sqrt", "1/x", "x^2", "x^3")) {
+  } else if (method %in% c("log", "log+1", "sqrt", "1/x", "x^2", "x^3", 
+                           "Box-Cox", "Yeo-Johnson")) {
     cat(sprintf("* Resolving Skewness with %s\n\n", method))
   }
 
@@ -166,7 +188,7 @@ summary.transform <- function(object, ...) {
 #'
 #' @description
 #' Visualize two kinds of plot by attribute of `transform` class.
-#' The Transformation of a numerical variable is a density plot.
+#' The transformation of a numerical variable is a density plot.
 #'
 #' @param x an object of class "transform", usually, a result of a call to transform().
 #' @param ... arguments to be passed to methods, such as graphical parameters (see par).
@@ -205,7 +227,7 @@ plot.transform <- function(x, ...) {
     filter(key == "original") %>%
     ggplot(aes(x = value)) +
     geom_density(na.rm = TRUE) +
-    ggtitle("Oraginal Data") +
+    ggtitle("Original Data") +
     theme(plot.title = element_text(hjust = 0.5))
 
   fig2 <- df %>%
@@ -221,7 +243,7 @@ plot.transform <- function(x, ...) {
 
 #' Reporting the information of transformation
 #'
-#' @description The transformation_report() report the information of transformate
+#' @description The transformation_report() report the information of transform
 #' numerical variables for object inheriting from data.frame.
 #'
 #' @details Generate transformation reports automatically.
@@ -278,7 +300,7 @@ plot.transform <- function(x, ...) {
 #' "html" create html file by rmarkdown::render().
 #' @param output_file name of generated file. default is NULL.
 #' @param output_dir name of directory to generate report file. default is tempdir().
-#' @param font_family charcter. font family name for figure in pdf.
+#' @param font_family character. font family name for figure in pdf.
 #' @param browse logical. choose whether to output the report results to the browser.
 #'
 #' @examples
@@ -293,12 +315,13 @@ plot.transform <- function(x, ...) {
 #' transformation_report(carseats)
 #' # create pdf file. file name is Transformation_Report.pdf
 #' transformation_report(carseats, US)
-#' # create pdf file. file name is Transformation.pdf
-#' transformation_report(carseats, "US", output_file = "Transformation.pdf")
+#' # create pdf file. file name is Transformation_carseats.pdf
+#' transformation_report(carseats, "US", output_file = "Transformation_carseats.pdf")
 #' # create html file. file name is Transformation_Report.html
 #' transformation_report(carseats, "US", output_format = "html")
-#' # create html file. file name is Transformation.html
-#' transformation_report(carseats, US, output_format = "html", output_file = "Transformation.html")
+#' # create html file. file name is Transformation_carseats
+#' transformation_report(carseats, US, output_format = "html", 
+#'                       output_file = "Transformation_carseats.html")
 #' }
 #'
 #' @importFrom knitr knit2pdf
@@ -306,7 +329,6 @@ plot.transform <- function(x, ...) {
 #' @importFrom grDevices cairo_pdf
 #' @importFrom gridExtra grid.arrange
 #' @importFrom xtable xtable
-#' @importFrom moments skewness kurtosis
 #' @importFrom knitr kable
 #' @importFrom prettydoc html_pretty
 #' @importFrom kableExtra kable_styling

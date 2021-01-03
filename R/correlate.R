@@ -14,7 +14,7 @@ plot_correlate <- function(.data, ...) {
 
 #' Compute the correlation coefficient between two numerical data
 #'
-#' @description The correlate() compute pearson's the correlation
+#' @description The correlate() compute Pearson's the correlation
 #' coefficient of the numerical data.
 #'
 #' @details This function is useful when used with the group_by() function of the dplyr package.
@@ -28,7 +28,7 @@ plot_correlate <- function(.data, ...) {
 #' \itemize{
 #' \item var1 : names of numerical variable
 #' \item var2 : name of the corresponding numeric variable
-#' \item coef_corr : pearson's correlation coefficient
+#' \item coef_corr : Pearson's correlation coefficient
 #' }
 #'
 #' @param .data a data.frame or a \code{\link{tbl_df}}.
@@ -334,8 +334,15 @@ plot_correlate_impl <- function(df, vars, method) {
     row.names(M2) <- vars
   }
 
-  corrplot::corrplot(M2, method = "ellipse", diag = FALSE,
-    tl.srt = 45, type = "upper", mar = c(0, 0, 1, 0))
+  if (nrow(M2) >= 20) {
+    corrplot::corrplot(M2, is.corr = FALSE, tl.cex = 0.5, tl.srt = 45, 
+                       method = "color", tl.col="black",
+                       mar = c(0, 0, 1, 0))
+  } else {
+    corrplot::corrplot(M2, method = "ellipse", diag = FALSE, tl.cex = 0.7, 
+                       tl.col="black", tl.srt = 45, type = "upper", 
+                       mar = c(0, 0, 1, 0)) 
+  }
 }
 
 

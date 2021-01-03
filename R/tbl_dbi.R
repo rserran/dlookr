@@ -224,8 +224,8 @@ diagn_std_impl_dbi <- function(df, vars) {
 #' \item variables : variable names
 #' \item levels: level names
 #' \item N : number of observation
-#' \item freq : number of observation at the levles
-#' \item ratio : percentage of observation at the levles
+#' \item freq : number of observation at the levels
+#' \item ratio : percentage of observation at the levels
 #' \item rank : rank of occupancy ratio of levels
 #' }
 #'
@@ -474,7 +474,7 @@ diagnose_numeric.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_si
 #'
 #' \itemize{
 #' \item variables : variable names
-#' \item outliers_cnt : count of outliers
+#' \item outliers_cnt : number of outliers
 #' \item outliers_ratio : percent of outliers
 #' \item outliers_mean : arithmetic average of outliers
 #' \item with_mean : arithmetic average of with outliers
@@ -696,7 +696,7 @@ plot_outlier.tbl_dbi <- function(.data, ..., col = "lightblue",
 #' These arguments are automatically quoted and evaluated in a context where column names
 #' represent column positions.
 #' They support unquoting and splicing.
-#' @param sample the numer of samples to perform the test.
+#' @param sample the number of samples to perform the test.
 #' @param in_database Specifies whether to perform in-database operations. 
 #' If TRUE, most operations are performed in the DBMS. if FALSE, 
 #' table data is taken in R and operated in-memory. Not yet supported in_database = TRUE.
@@ -806,8 +806,21 @@ normality.tbl_dbi <- function(.data, ..., sample = 5000,
 #' Since the plot is drawn for each variable, if you specify more than
 #' one variable in the ... argument, the specified number of plots are drawn.
 #'
+#' The argument values that left and right can have are as follows.:
+#' 
+#' \itemize{
+#'   \item "log" : log transformation. log(x)
+#'   \item "log+1" : log transformation. log(x + 1). Used for values that contain 0.
+#'   \item "sqrt" : square root transformation.
+#'   \item "1/x" : 1 / x transformation
+#'   \item "x^2" : x square transformation
+#'   \item "x^3" : x^3 square transformation
+#'   \item "Box-Cox" : Box-Box transformation
+#'   \item "Yeo-Johnson" : Yeo-Johnson transformation
+#' }
+#'
 #' @section Distribution information:
-#' The plot derived from the numerical data vizualization is as follows.
+#' The plot derived from the numerical data visualization is as follows.
 #'
 #' \itemize{
 #' \item histogram by original data
@@ -825,13 +838,17 @@ normality.tbl_dbi <- function(.data, ..., sample = 5000,
 #' These arguments are automatically quoted and evaluated in a context where column names
 #' represent column positions.
 #' They support unquoting and splicing.
+#' 
+#' See vignette("EDA") for an introduction to these concepts.
 #' @param in_database Specifies whether to perform in-database operations. 
 #' If TRUE, most operations are performed in the DBMS. if FALSE, 
 #' table data is taken in R and operated in-memory. Not yet supported in_database = TRUE.
 #' @param collect_size a integer. The number of data samples from the DBMS to R. 
 #' Applies only if in_database = FALSE.
-#' 
-#' See vignette("EDA") for an introduction to these concepts.
+#' @param left character. Specifies the data transformation method to draw the histogram in the 
+#' lower left corner. The default is "log".
+#' @param right character. Specifies the data transformation method to draw the histogram in the 
+#' lower right corner. The default is "sqrt".
 #'
 #' @seealso \code{\link{plot_normality.data.frame}}, \code{\link{plot_outlier.tbl_dbi}}.
 #' @export
@@ -873,6 +890,12 @@ normality.tbl_dbi <- function(.data, ..., sample = 5000,
 #'   group_by(ShelveLoc, US) %>%
 #'   plot_normality(Sales)
 #'
+#' # Plot using left and right arguments
+#' con_sqlite %>% 
+#'   tbl("TB_CARSEATS") %>% 
+#'   group_by(ShelveLoc, US) %>%
+#'   plot_normality(Sales, left = "Box-Cox", right = "log")
+#'
 #' # extract only those with 'ShelveLoc' variable level is "Good",
 #' # and plot 'Income' by 'US'
 #' con_sqlite %>% 
@@ -882,8 +905,15 @@ normality.tbl_dbi <- function(.data, ..., sample = 5000,
 #'   plot_normality(Income)
 #' }
 #' 
-plot_normality.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size = Inf) {
+plot_normality.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size = Inf, 
+                                   left = c("log", "sqrt", "log+1", "1/x", "x^2", 
+                                            "x^3", "Box-Cox", "Yeo-Johnson"),
+                                   right = c("sqrt", "log", "log+1", "1/x", "x^2", 
+                                             "x^3", "Box-Cox", "Yeo-Johnson")) {
   vars <- tidyselect::vars_select(colnames(.data), !!! rlang::quos(...))
+  
+  left <- match.arg(left)
+  right <- match.arg(right)
   
   if (in_database) {
     stop("It does not yet support in-database mode. Use in_database = FALSE.")
@@ -891,11 +921,11 @@ plot_normality.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size
     if (class(.data$ops)[1] != "op_group_by") {
       .data %>% 
         dplyr::collect(n = collect_size) %>%
-        plot_normality_impl(vars)
+        plot_normality_impl(vars, left, right)
     } else {
       .data %>% 
         dplyr::collect(n = collect_size) %>%
-        plot_normality_group_impl(vars)
+        plot_normality_group_impl(vars, left, right)
     }
   }
 }
@@ -903,7 +933,7 @@ plot_normality.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size
 
 #' Compute the correlation coefficient between two numerical data
 #'
-#' @description The correlate() compute pearson's the correlation
+#' @description The correlate() compute Pearson's the correlation
 #' coefficient of the numerical(INTEGER, NUMBER, etc.) column of 
 #' the DBMS table through tbl_dbi.
 #'
@@ -918,7 +948,7 @@ plot_normality.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size
 #' \itemize{
 #' \item var1 : names of numerical variable
 #' \item var2 : name of the corresponding numeric variable
-#' \item coef_corr : pearson's correlation coefficient
+#' \item coef_corr : Pearson's correlation coefficient
 #' }
 #'
 #' @param .data a tbl_dbi.
@@ -1007,7 +1037,7 @@ plot_normality.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size
 #' # extract only those with 'ShelveLoc' variable level is "Good",
 #' # and compute the correlation coefficient of 'Sales' variable
 #' # by 'Urban' and 'US' variables.
-#' # And the correlation coefficient is negative and smaller than 0.5
+#' # And the correlation coefficient is negative and smaller than -0.5
 #' con_sqlite %>% 
 #'   tbl("TB_CARSEATS") %>% 
 #'   filter(ShelveLoc == "Good") %>%
@@ -1165,8 +1195,8 @@ plot_correlate.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size
 #' \item n : number of observations excluding missing values
 #' \item na : number of missing values
 #' \item mean : arithmetic average
-#' \item sd : standard devation
-#' \item se_mean : standrd error mean. sd/sqrt(n)
+#' \item sd : standard deviation
+#' \item se_mean : standard error mean. sd/sqrt(n)
 #' \item IQR : interquartile range (Q3-Q1)
 #' \item skewness : skewness
 #' \item kurtosis : kurtosis
@@ -1417,7 +1447,7 @@ target_by.tbl_dbi <- function(.data, target, in_database = FALSE, collect_size =
 #' "html" create html file by rmarkdown::render().
 #' @param output_file name of generated file. default is NULL.
 #' @param output_dir name of directory to generate report file. default is tempdir().
-#' @param font_family charcter. font family name for figure in pdf.
+#' @param font_family character. font family name for figure in pdf.
 #' @param ... arguments to be passed to methods.
 #' 
 #' @seealso \code{\link{diagnose_report.data.frame}}.
@@ -1512,12 +1542,12 @@ diagnose_report.tbl_dbi <- function(.data, output_format = c("pdf", "html"),
 #'   }
 #'   \item Target based Analysis
 #'   \itemize{
-#'     \item Gruoped Descriptive Statistics
+#'     \item Grouped Descriptive Statistics
 #'     \itemize{
-#'       \item Gruoped Numerical Variables
-#'       \item Gruoped Categorical Variables
+#'       \item Grouped Numerical Variables
+#'       \item Grouped Categorical Variables
 #'     }
-#'     \item Gruoped Relationship Between Variables
+#'     \item Grouped Relationship Between Variables
 #'     \itemize{
 #'       \item Grouped Correlation Coefficient
 #'       \item Grouped Correlation Plot of Numerical Variables
@@ -1539,7 +1569,7 @@ diagnose_report.tbl_dbi <- function(.data, output_format = c("pdf", "html"),
 #' "html" create html file by rmarkdown::render().
 #' @param output_file name of generated file. default is NULL.
 #' @param output_dir name of directory to generate report file. default is tempdir().
-#' @param font_family charcter. font family name for figure in pdf.
+#' @param font_family character. font family name for figure in pdf.
 #' @param ... arguments to be passed to methods.
 #' 
 #' @seealso \code{\link{eda_report.data.frame}}.
@@ -1565,20 +1595,20 @@ diagnose_report.tbl_dbi <- function(.data, output_format = c("pdf", "html"),
 #'   tbl("TB_CARSEATS") %>% 
 #'   eda_report(US)
 #' 
-#' # create pdf file. file name is EDA.pdf
+#' # create pdf file. file name is EDA_TB_CARSEATS.pdf
 #' con_sqlite %>% 
 #'   tbl("TB_CARSEATS") %>% 
-#'   eda_report("US", output_file = "EDA.pdf")
+#'   eda_report("US", output_file = "EDA_TB_CARSEATS.pdf")
 #' 
 #' # create html file. file name is EDA_Report.html
 #' con_sqlite %>% 
 #'   tbl("TB_CARSEATS") %>% 
 #'   eda_report("US", output_format = "html")
 #' 
-#' # create html file. file name is EDA.html
+#' # create html file. file name is EDA_TB_CARSEATS.html
 #' con_sqlite %>% 
 #'   tbl("TB_CARSEATS") %>% 
-#'   eda_report(US, output_format = "html", output_file = "EDA.html")
+#'   eda_report(US, output_format = "html", output_file = "EDA_TB_CARSEATS.html")
 #'
 #' ## target variable is numerical variable
 #' # reporting the EDA information, and collect size is 350

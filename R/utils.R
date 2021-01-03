@@ -43,7 +43,7 @@ get_class <- function(df) {
 #' "categorical2" adds "character" class to "categorical".
 #' @param index logical. If TRUE is return numeric vector that is variables index.
 #' and if FALSE is return character vector that is variables name.
-#' defalut is TRUE.
+#' default is TRUE.
 #'
 #' @return character vector or numeric vector.
 #' The meaning of vector according to data type is as follows.
@@ -261,7 +261,6 @@ find_outliers <- function(.data, index = TRUE, rate = FALSE) {
 #'   diagnose()
 #' }
 #' @importFrom purrr map_lgl map_dbl
-#' @importFrom moments skewness
 #' @export
 find_skewness <- function(.data, index = TRUE, value = FALSE, thres = NULL) {
   numeric_flag <- sapply(seq(.data),
@@ -270,7 +269,7 @@ find_skewness <- function(.data, index = TRUE, value = FALSE, thres = NULL) {
   if (value) {
     idx <- .data %>%
       .[, numeric_flag] %>%
-      map_dbl(moments::skewness) %>%
+      map_dbl(skewness) %>%
       round(3)
     if (!is.null(thres)) idx <- idx[abs(idx) >= thres & !is.na(idx)]
   } else {
@@ -278,7 +277,7 @@ find_skewness <- function(.data, index = TRUE, value = FALSE, thres = NULL) {
 
     idx <- .data %>%
       .[, numeric_flag] %>%
-      map_lgl(function(x) abs(moments::skewness(x)) >= thres) %>%
+      map_lgl(function(x) abs(skewness(x)) >= thres) %>%
       which()
 
     idx <- which(numeric_flag)[idx]
@@ -287,6 +286,54 @@ find_skewness <- function(.data, index = TRUE, value = FALSE, thres = NULL) {
   }
 
   idx
+}
+
+
+#' Skewness of the data
+#'
+#' @description
+#' This function calculated skewness of given data.
+#'
+#' @param x a numeric vector.
+#' @param na.rm logical. Determine whether to remove missing values and calculate them. 
+#' The default is TRUE.
+#' @return numeric. calculated skewness.
+#' @seealso \code{\link{kurtosis}}, \code{\link{find_skewness}}.
+#' @examples
+#' set.seed(123)
+#' skewness(rnorm(100))
+#' @export
+skewness <- function(x,  na.rm = TRUE) {
+  if (na.rm) 
+    x <- x[!is.na(x)]
+  
+  n <- length(x)
+  
+  (sum((x - mean(x)) ^ 3) / n) / (sum((x - mean(x)) ^ 2) / n) ^ (3 / 2)
+}
+
+
+#' Kurtosis of the data
+#'
+#' @description
+#' This function calculated kurtosis of given data.
+#'
+#' @param x a numeric vector.
+#' @param na.rm logical. Determine whether to remove missing values and calculate them. 
+#' The default is TRUE.
+#' @return numeric. calculated kurtosis
+#' @seealso \code{\link{skewness}}.
+#' @examples
+#' set.seed(123)
+#' kurtosis(rnorm(100))
+#' @export
+kurtosis <- function(x,  na.rm = FALSE) {
+  if (na.rm) 
+    x <- x[!is.na(x)]
+  
+  n <- length(x)
+  
+  n * sum((x - mean(x)) ^ 4) / (sum((x - mean(x)) ^ 2) ^ 2)
 }
 
 
@@ -320,3 +367,80 @@ get_os <- function() {
   tolower(os)
 }
 
+
+#' Calculate the entropy
+#'
+#' @description
+#' Calculate the Shannon's entropy.
+#' 
+#' @param x a numeric vector.
+#'
+#' @return numeric. entropy
+#'
+#' @examples
+#' set.seed(123)
+#' x <- sample(1:10, 20, replace = TRUE)
+#' 
+#' entropy(x)
+#'
+#' @export
+entropy <- function(x) {
+  x <- x / sum(x)
+  -sum(ifelse(x > 0, x * log2(x), 0))
+}
+
+
+#' Finding percentile
+#'
+#' @description
+#' Find the percentile of the value specified in numeric vector.
+#'
+#' @param x numeric. a numeric vector.
+#' @param value numeric. a scalar to find percentile value from vector x.
+#' @param from numeric. Start interval in logic to find percentile value. default to 0.
+#' @param to numeric. End interval in logic to find percentile value. default to 1.
+#' @param eps numeric. Threshold value for calculating the approximate value in recursive 
+#' calling logic to find the percentile value. (epsilon). default to 1e-06.
+#' @return list.
+#' Components of list. is as follows.
+#' \itemize{
+#' \item percentile : numeric. Percentile position of value. It has a value between [0, 100].
+#' \item is_outlier : logical. Whether value is an outlier.
+#' }
+#' @examples
+#' \dontrun{
+#' carat <- ggplot2::diamonds$carat
+#' 
+#' quantile(carat)
+#' 
+#' get_percentile(carat, value = 0.5)
+#' get_percentile(carat, value = median(diamonds$carat))
+#' get_percentile(carat, value = 1)
+#' get_percentile(carat, value = 7)
+#' }
+#' @importFrom stats quantile
+#' @export
+get_percentile <- function(x, value, from = 0, to = 1, eps = 1e-06) {
+  N <- 5
+  coef <- 1.5
+  
+  breaks <- seq(from, to, length.out = N)
+  percentile <- quantile(x, probs = breaks)
+  
+  iqr <- diff(percentile[c(2, 4)])
+  outlier <- as.logical(value < (percentile[2L] - coef * iqr) | value > (percentile[4L] + coef * iqr))
+  
+  cutoff <- as.numeric(sub("%", "", names(percentile))) / 100
+  
+  for (i in seq(N)) {
+    if (value >= percentile[i]) from <- max(from, cutoff[i])
+    if (value <= percentile[i]) to <- min(to, cutoff[i])
+  }
+  
+  if ((to - from) <= eps) {
+    result <- mean(from, to) * 100
+    return(list(percentile = result, is_outlier = outlier))
+  } else {
+    get_percentile(x, value, from = from, to = to)
+  }
+}

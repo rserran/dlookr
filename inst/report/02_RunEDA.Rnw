@@ -72,12 +72,12 @@ if (!is.null(targetVariable)) {
 
 # if all elements of a numerical variable are NA,
 # remove from correlation coefficient calculation
-idx.numeric <- idx.numeric[apply(edaData[, idx.numeric], 2,
+idx.numeric <- idx.numeric[apply(as.data.frame(edaData[, idx.numeric]), 2,
                                  function(x) !all(is.na(x)))]
 
 # if all elements of the numerical variable are the same value,
 # remove from the correlation coefficient calculation
-idx.numeric <- idx.numeric[apply(edaData[, idx.numeric], 2,
+idx.numeric <- idx.numeric[apply(as.data.frame(edaData[, idx.numeric]), 2,
                                  function(x) diff(range(x, na.rm = TRUE)) > 0)]
 @
 
@@ -92,10 +92,13 @@ The dataset that generated the EDA Report is an '\Sexpr{class(edaData)[1]}' obje
 cap <- "Information of Variables"
 
 vars <- edaData %>%
-  diagnose()
+  diagnose() %>% 
+  mutate(missing_percent = round(missing_percent, 2),
+         unique_rate = round(unique_rate, 3))
 
-knitr::kable(vars, caption = cap, booktabs = TRUE) %>%
+knitr::kable(vars, caption = cap, booktabs = TRUE, longtable = TRUE) %>%
   kable_styling(latex_options = c("striped", "hold_position")) %>%
+  kable_styling(latex_options = c("repeat_header")) %>% 
   cat()
 
 target_nm <- if (is.null(targetVariable)) "NULL" else targetVariable
@@ -131,7 +134,7 @@ if (length(idx.numeric) == 0) {
       cat("\n")
       cat("\\subsubsection{", cap, "}\n")
 
-    cat("\nnormality test : Shapiro-Wilk normality test\n\n")
+    cat("\\noindent * normality test : Shapiro-Wilk normality test\n\n")
 
     x <- if (NROW(edaData) > 5000) {
       sample(pull(edaData, i), size = 5000, replace = TRUE)
@@ -159,39 +162,71 @@ if (length(idx.numeric) == 0) {
 
     y <- shapiro.test(x)
 
-    cat(sprintf("\\noindent statistic : %s,  p-value : %G\\\\\n",
+    cat(sprintf("\\noindent - statistic : %s,  p-value : %G\\\\\n",
                 round(y$statistic, 5),  y$p.value))
 
-    skew <- c(skewness(x, na.rm = TRUE),
-              skewness(log(x), na.rm = TRUE),
-              skewness(sqrt(x), na.rm = TRUE))
-
-    kurt <- c(kurtosis(x, na.rm = TRUE),
-              kurtosis(log(x), na.rm = TRUE),
-              kurtosis(sqrt(x), na.rm = TRUE))
-
-    type <- c("original", "log transformation", "sqrt transformation")
+    if (is.factor(x)) x <- as.numeric(x)
+    
+    if (sum(x < 0, na.rm = TRUE) > 0) {
+      type <- c("original", "log+a transformation", "Box-Cox transformation")
+  
+      skew <- c(skewness(x, na.rm = TRUE),
+                skewness(get_transform(x, "log+a"), na.rm = TRUE),
+                skewness(get_transform(x, "Box-Cox"), na.rm = TRUE))
+  
+      kurt <- c(kurtosis(x, na.rm = TRUE),
+                kurtosis(get_transform(x, "log+a"), na.rm = TRUE),
+                kurtosis(get_transform(x, "Box-Cox"), na.rm = TRUE))          
+    } else {
+      if (any(x == 0, na.rm = TRUE)) {
+        type <- c("original", "log+1 transformation", "sqrt transformation")
+        
+        skew <- c(skewness(x, na.rm = TRUE),
+                  skewness(get_transform(x, "log+1"), na.rm = TRUE),
+                  skewness(sqrt(x), na.rm = TRUE))
+        
+        kurt <- c(kurtosis(x, na.rm = TRUE),
+                  kurtosis(get_transform(x, "log+1"), na.rm = TRUE),
+                  kurtosis(sqrt(x), na.rm = TRUE))         
+      } else {
+        type <- c("original", "log transformation", "sqrt transformation")
+        
+        skew <- c(skewness(x, na.rm = TRUE),
+                  skewness(log(x), na.rm = TRUE),
+                  skewness(sqrt(x), na.rm = TRUE))
+        
+        kurt <- c(kurtosis(x, na.rm = TRUE),
+                  kurtosis(log(x), na.rm = TRUE),
+                  kurtosis(sqrt(x), na.rm = TRUE)) 
+      }     
+    }
+    
     stats <- data.frame(type = type, skewness = skew, kurtosis = kurt)
 
     tab_cap <- paste("skewness and kurtosis :", cap)
 
     cat("\\\\")
 
-    print(xtable(stats, caption = tab_cap, digits = 4),
-          floating = FALSE, booktabs = TRUE,
-          include.rownames = FALSE,
-          caption.placement = "top", table.placement = "!htb")
+    kable(stats, digits = 4, caption = tab_cap, 
+          label = paste0("numeric_variables", i),
+          booktabs = TRUE, escape = FALSE) %>%
+      kable_styling(latex_options = c("striped", "hold_position")) %>%
+      cat()
 
     cat("\\\\")
     cat("\n")
 
     cairo_pdf(filename = sprintf("./figure/norm%s.pdf", i), width = 6, height = 4)
-    par(mfrow = c(2, 2), mar = c(2, 4, 2, 2))
-    hist(x, col = "lightblue", las = 1, main = "origin")
-    qqnorm(x, main = "origin: Q-Q plot")
-    qqline(x)
-    hist(log(x), col = "lightblue", las = 1, main = "log")
-    hist(sqrt(x), col = "lightblue", las = 1, main = "sqrt")
+    x <- data.frame(x)
+    
+    if (sum(x < 0, na.rm = TRUE) > 0)
+      plot_normality(x, x, left = "log+a", right = "Box-Cox")
+    else {
+      if (any(x == 0, na.rm = TRUE)) 
+        plot_normality(x, x, left = "log+1", right = "sqrt")
+      else
+        plot_normality(x, x)
+    }
     dev.off()
 
     cap <- change_under(names(edaData)[i])

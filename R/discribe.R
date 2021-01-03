@@ -23,8 +23,8 @@ describe <- function(.data, ...) {
 #' \item n : number of observations excluding missing values
 #' \item na : number of missing values
 #' \item mean : arithmetic average
-#' \item sd : standard devation
-#' \item se_mean : standrd error mean. sd/sqrt(n)
+#' \item sd : standard deviation
+#' \item se_mean : standard error mean. sd/sqrt(n)
 #' \item IQR : interquartile range (Q3-Q1)
 #' \item skewness : skewness
 #' \item kurtosis : kurtosis
@@ -37,7 +37,7 @@ describe <- function(.data, ...) {
 #'
 #' }
 #'
-#' @param .data a data.frame or a \code{\link{tbl_df}}.
+#' @param .data a data.frame or a \code{\link{tbl_df}} or a \code{\link{grouped_df}}.
 #' @param ... one or more unquoted expressions separated by commas.
 #' You can treat variable names like they are positions.
 #' Positive values select variables; negative values to drop variables.
@@ -98,6 +98,7 @@ describe <- function(.data, ...) {
 #' @importFrom tidyselect vars_select
 #' @importFrom rlang quos
 #' @export
+#' @rdname describe.data.frame
 describe.data.frame <- function(.data, ...) {
   vars <- tidyselect::vars_select(names(.data), !!! rlang::quos(...))
   describe_impl(.data, vars)
@@ -126,7 +127,9 @@ describe_impl <- function(df, vars) {
     
     cnt_complete <- sum(complete.cases(x))
     
-    numsum <- as_tibble(matrix(NA, ncol = length(vname) + 2, nrow = 1))
+    numsum <- matrix(NA, ncol = length(vname) + 2, nrow = 1,
+                     dimnames = list(NULL, paste0("C", seq(length(vname) + 2))))
+    numsum <- as_tibble(numsum)
     
     if (cnt_complete >= 4) {
       result <- RcmdrMisc::numSummary(x, statistics = stats,
@@ -163,7 +166,7 @@ describe_impl <- function(df, vars) {
     tidyr::unnest(cols = c(statistic))
 }
 
-
+#' @rdname describe.data.frame
 #' @method describe grouped_df
 #' @importFrom tidyselect vars_select
 #' @importFrom rlang quos

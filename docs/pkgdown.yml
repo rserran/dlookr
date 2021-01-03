@@ -1,0 +1,10 @@
+pandoc: 2.11.0.2
+pkgdown: 1.5.1
+pkgdown_sha: ~
+articles:
+  EDA: EDA.html
+  diagonosis: diagonosis.html
+  introduce: introduce.html
+  transformation: transformation.html
+last_built: 2020-11-22T02:19Z
+

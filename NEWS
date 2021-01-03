@@ -1,29 +1,70 @@
+dlookr 0.3.15
+----------------------------------------------------------------
+* eda_report() fixed error when data have a only 1 complated numeric variable (@EvanLuff, #27).
+
+* eda_report() fixed error when transform numeric variables that include minus values (@Roberto Passera).
+
+* eda_report() change the correlation plot and normality test(log+1: include 0, log+a/Box-Cox: include minus).
+
+* plot_correlate() change the correlation plot that support 2 case plots(number of variabe >=20, <20).
+
+* transform(), summary.transform(), plot.transform() supports Box-Cox transform. (@lucazav, #21).
+
+* transform(), summary.transform(), plot.transform() supports Yeo-Johnson transform. (@zhjx19, #21).
+
+* plot_normality() supports log+1, log+a, 1/x, x^2, x^3, Box-Cox, Yeo-Johnson transform. (@lucazav, #21).
+
+* Add a new function entropy() to compute Shannon's entropy.
+
+* Add a new function get_percentile() to compute percentile position.
+
+* Add a new function get_transform() to transform numeric variable.
+
+* plot_na_pareto() changed the legend that show the all levels and display the more informations.
+
+* Add a new function plot_bar_category() to visualizes the distribution of categorical data by level or relationship to specific numerical data by level.
+
+* Add a new function plot_qq_numeric() to visualizes the Q-Q plot of numeric data or relationship to specific categorical data.
+
+* Add a new function plot_box_numeric() to visualizes the box plot of numeric data or relationship to specific categorical data.
+
+
 dlookr 0.3.14
 ----------------------------------------------------------------
 * correlate() add the non-parametric correlation coefficient, like "spearman" and "kendall" (@Roberto Passera)
 
 * plot_correlate() add the non-parametric correlation coefficient, like "spearman"" and "kendall" (@Roberto Passera)
 
-* Add a new function plot.univar_nuemeric() to visualize box plot and histogram by attribute of "univar_nuemeric" class. (@Roberto Passera)
-
-* relate() fixed error when using character type as a categorical variable (@jgduenasl, #14).
-
-* Add a new function plot.compare_category() to visualize mosaics plot by attribute of "compare_category" class. (@Roberto Passera)
-
-* Add a new function compare_nuemeric() to compute information to examine the relationship between numerical variables. and print.compare_nuemeric(), summary.compare_nuemeric() is print and summary for "compare_nuemeric" class. (@Roberto Passera)
-
-* Add a new function plot.compare_nuemeric() to visualize scatter plot included boxplots by attribute of "compare_nuemeric" class. (@Roberto Passera)
-
 * Add a new function univar_category() to compute information to examine the indivisual categorical variables. and print.univar_category(), summary.univar_category() is print and summary for "univar_category" class. (@Roberto Passera)
 
 * Add a new function plot.univar_category() to visualize bar plot by attribute of "univar_category" class. (@Roberto Passera)
 
-* Add a new function univar_nuemeric() to compute information to examine the indivisual numerical variables. and print.univar_nuemeric(), summary.univar_nuemeric() is print and summary for "univar_nuemeric" class. (@Roberto Passera)
+* Add a new function univar_numeric() to compute information to examine the indivisual numerical variables. and print.univar_numeric(), summary.univar_numeric() is print and summary for "univar_numeric" class. (@Roberto Passera)
 
-* Add a new function plot.univar_nuemeric() to visualize box plot and histogram by attribute of "univar_nuemeric" class. (@Roberto Passera)
+* Add a new function plot.univar_numeric() to visualize box plot and histogram by attribute of "univar_numeric" class. (@Roberto Passera)
 
+* Add a new function compare_category() to compute information to examine the relationship between numerical variables. and print.compare_category(), summary.compare_category() is print and summary for "compare_category" class. (@Roberto Passera)
 
+* Add a new function plot.compare_category() to visualize mosaics plot by attribute of "compare_category" class. (@Roberto Passera)
 
+* Add a new function compare_numeric() to compute information to examine the relationship between numerical variables. and print.compare_numeric(), summary.compare_numeric() is print and summary for "compare_numeric" class. (@Roberto Passera)
+
+* Add a new function plot.compare_numeric() to visualize scatter plot included boxplots by attribute of "compare_numeric" class. (@Roberto Passera)
+
+* Add a new function plot_na_pareto() to visualize pareto chart for variables with missing value.
+
+* Add a new function plot_na_hclust() to visualize distribution of missing value by combination of variables. (@Luca Zavarella)
+
+* Add a new function plot_na_intersect() to visualize the patterns of missing value, or rather the combinations of missing value across cases. (@Luca Zavarella)
+
+* Add a new vignette `Introduce dlookr`.
+
+* relate() fixed error when using character type as a categorical variable (@jgduenasl, #14).
+
+* Corrected sentence and typo in manuals and vignettes
+
+* plot.transform() fixed miss typo in title of plot (@MarioPrado1148, #26).
+ 
  
 dlookr 0.3.13
 ----------------------------------------------------------------

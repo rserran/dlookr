@@ -3,14 +3,17 @@
 \name{describe}
 \alias{describe}
 \alias{describe.data.frame}
+\alias{describe.grouped_df}
 \title{Compute descriptive statistic}
 \usage{
 describe(.data, ...)
 
 \method{describe}{data.frame}(.data, ...)
+
+\method{describe}{grouped_df}(.data, ...)
 }
 \arguments{
-\item{.data}{a data.frame or a \code{\link{tbl_df}}.}
+\item{.data}{a data.frame or a \code{\link{tbl_df}} or a \code{\link{grouped_df}}.}
 
 \item{...}{one or more unquoted expressions separated by commas.
 You can treat variable names like they are positions.
@@ -44,8 +47,8 @@ The information derived from the numerical data describe is as follows.
 \item n : number of observations excluding missing values
 \item na : number of missing values
 \item mean : arithmetic average
-\item sd : standard devation
-\item se_mean : standrd error mean. sd/sqrt(n)
+\item sd : standard deviation
+\item se_mean : standard error mean. sd/sqrt(n)
 \item IQR : interquartile range (Q3-Q1)
 \item skewness : skewness
 \item kurtosis : kurtosis
