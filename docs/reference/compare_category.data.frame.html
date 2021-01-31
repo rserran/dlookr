@@ -73,7 +73,7 @@ between categorical variables." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dlookr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@ between categorical variables." />
 </li>
 <li>
   <a href="https://github.com/choonghyunryu/dlookr/">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -191,7 +191,7 @@ and return compare_category class that based list object.</p>
 <span class='co'># Compare the all categorical variables</span>
 <span class='no'>all_var</span> <span class='kw'>&lt;-</span> <span class='fu'>compare_category</span>(<span class='no'>carseats</span>)
 
-<span class='co'># Print compare_numeric class object</span>
+<span class='co'># Print compare_numeric class objects</span>
 <span class='no'>all_var</span></div><div class='output co'>#&gt; $`ShelveLoc vs Urban`
 #&gt; <span style='color: #555555;'># A tibble: 9 x 6</span><span>
 #&gt;   ShelveLoc Urban     n   rate var1_rate var2_rate
@@ -255,7 +255,7 @@ and return compare_category class that based list object.</p>
 <span class='co'># Compare the two categorical variables</span>
 <span class='no'>two_var</span> <span class='kw'>&lt;-</span> <span class='fu'>compare_category</span>(<span class='no'>carseats</span>, <span class='no'>ShelveLoc</span>, <span class='no'>Urban</span>)
 
-<span class='co'># Print compare_numeric class object</span>
+<span class='co'># Print compare_numeric class objects</span>
 <span class='no'>two_var</span></div><div class='output co'>#&gt; $`ShelveLoc vs Urban`
 #&gt; </span><span style='color: #555555;'># A tibble: 9 x 6</span><span>
 #&gt;   ShelveLoc Urban     n   rate var1_rate var2_rate
@@ -330,7 +330,7 @@ and return compare_category class that based list object.</p>
 #&gt; 1  ShelveLoc      Urban 2.7917270 0.2476191  2
 #&gt; 2  ShelveLoc         US 2.7396674 0.2541492  2
 #&gt; 3      Urban         US 0.6009241 0.4382256  1</div><div class='input'>
-<span class='co'># Summary by returned object</span>
+<span class='co'># Summary by returned objects</span>
 <span class='no'>stat</span></div><div class='output co'>#&gt; $table
 #&gt; $table$`ShelveLoc vs Urban`
 #&gt;          Urban
@@ -538,14 +538,18 @@ and return compare_category class that based list object.</p>
 #&gt;    Bad     22  73
 #&gt;    Good    28  56
 #&gt;    Medium  68 148</div><div class='input'>
-<span class='co'># plot all pair of variables</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>all_var</span>)</div><div class='img'><img src='compare_category.data.frame-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='compare_category.data.frame-2.png' alt='' width='700' height='433' /></div><div class='img'><img src='compare_category.data.frame-3.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'># plot a pair of variables</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>two_var</span>)</div><div class='img'><img src='compare_category.data.frame-4.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'># plot all pair of variables by prompt</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>all_var</span>, <span class='kw'>prompt</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; Hit &lt;Return&gt; to see next plot:</div><div class='output co'>#&gt; Hit &lt;Return&gt; to see next plot:</div><div class='img'><img src='compare_category.data.frame-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; Hit &lt;Return&gt; to see next plot:</div><div class='img'><img src='compare_category.data.frame-6.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'># plot a pair of variables</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>two_var</span>, <span class='kw'>las</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='img'><img src='compare_category.data.frame-7.png' alt='' width='700' height='433' /></div><div class='input'>
+# plot all pair of variables
+# plot(all_var)
+
+# plot a pair of variables
+# plot(two_var)
+
+# plot all pair of variables by prompt
+# plot(all_var, prompt = TRUE)
+
+# plot a pair of variables
+# plot(two_var, las = 1)
+
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -73,7 +73,7 @@ The transformation of a numerical variable is a density plot." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dlookr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@ The transformation of a numerical variable is a density plot." />
 </li>
 <li>
   <a href="https://github.com/choonghyunryu/dlookr/">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -126,7 +126,7 @@ The transformation of a numerical variable is a density plot.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for transform</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>x</span>, <span class='kw'>typographic</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -134,6 +134,11 @@ The transformation of a numerical variable is a density plot.</p>
     <tr>
       <th>x</th>
       <td><p>an object of class "transform", usually, a result of a call to transform().</p></td>
+    </tr>
+    <tr>
+      <th>typographic</th>
+      <td><p>logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
+The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -258,7 +263,8 @@ The transformation of a numerical variable is a density plot.</p>
 #&gt; p90       16.0000000     0.55172414
 #&gt; p95       19.0000000     0.65517241
 #&gt; p99       23.0100000     0.79344828
-#&gt; p100      29.0000000     1.00000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>advertising_minmax</span>)</div><div class='img'><img src='plot.transform-1.png' alt='' width='700' height='433' /></div><div class='input'>
+#&gt; p100      29.0000000     1.00000000</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>advertising_minmax</span>)</div><div class='img'><img src='plot.transform-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Resolving Skewness  --------------------------</span>
 <span class='no'>advertising_log</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='transform.html'>transform</a></span>(<span class='no'>carseats</span>$<span class='no'>Advertising</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"log"</span>)
 <span class='no'>advertising_log</span></div><div class='output co'>#&gt;   [1] 2.3978953 2.7725887 2.3025851 1.3862944 1.0986123 2.5649494      -Inf 2.7080502
@@ -358,7 +364,9 @@ The transformation of a numerical variable is a density plot.</p>
 #&gt; p90       16.0000000      2.7725887
 #&gt; p95       19.0000000      2.9444390
 #&gt; p99       23.0100000      3.1359198
-#&gt; p100      29.0000000      3.3672958</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>advertising_log</span>)</div><div class='img'><img src='plot.transform-2.png' alt='' width='700' height='433' /></div></pre>
+#&gt; p100      29.0000000      3.3672958</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>advertising_log</span>)</div><div class='img'><img src='plot.transform-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>advertising_log</span>, <span class='kw'>typographic</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='img'><img src='plot.transform-3.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

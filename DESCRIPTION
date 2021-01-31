@@ -1,7 +1,7 @@
 Package: dlookr
 Type: Package
 Title: Tools for Data Diagnosis, Exploration, Transformation
-Version: 0.3.15
+Version: 0.4.1
 Authors@R: c(
   person("Choonghyun", "Ryu",, "choonghyun.ryu@gmail.com", role = c("aut", "cre"))
   )
@@ -17,44 +17,43 @@ License: GPL-2 | file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends:
-    R (>= 3.2.0),
-    mice
-Imports: dplyr,
-    magrittr,
-    tidyr,
-    ggplot2,
-    RcmdrMisc,
-    corrplot,
-    rlang,
-    purrr,
-    tibble,
-    tidyselect,
-    classInt,
-    kableExtra,
-    prettydoc,
-    smbinning,
-    xtable,
-    knitr,
-    rmarkdown,
-    RColorBrewer,
-    gridExtra,
-    tinytex,
-    methods,
-    DMwR,
-    rpart,
+    R (>= 3.2.0)
+Imports: 
     cli,
-    car,
-    broom,
-    reshape2,
-    forecast
-Suggests: ISLR,
+    corrplot,
+    dplyr (>= 0.7.6),
+    extrafont,
+    ggplot2 (>= 3.0.0),
+    grid,
+    gridExtra,
+    hrbrthemes,
+    kableExtra,
+    knitr,
+    magrittr,
+    methods,
+    mice,    
+    partykit,
+    prettydoc,
+    purrr,
+    RcmdrMisc,
+    rlang,
+    rmarkdown,
+    tibble,
+    tidyr,
+    tidyselect,
+    utils
+Suggests: 
+    DBI,
+    classInt,
+    dbplyr,
+    DMwR,
+    forecast,
+    ISLR,
     nycflights13,
     randomForest,
-    dbplyr,
-    DBI,
+    rpart,
     RSQLite,
-    stringr,
-    testthat
+    stringr
 Author: Choonghyun Ryu [aut, cre]
 Maintainer: Choonghyun Ryu <choonghyun.ryu@gmail.com>    
 BugReports: https://github.com/choonghyunryu/dlookr/issues

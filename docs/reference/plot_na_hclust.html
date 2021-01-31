@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dlookr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
 </li>
 <li>
   <a href="https://github.com/choonghyunryu/dlookr/">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -123,7 +123,13 @@
     <p>Visualize distribution of missing value by combination of variables.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_na_hclust</span>(<span class='no'>x</span>, <span class='kw'>main</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>col.left</span> <span class='kw'>=</span> <span class='st'>"#009E73"</span>, <span class='kw'>col.right</span> <span class='kw'>=</span> <span class='st'>"#56B4E9"</span>)</pre>
+    <pre class="usage"><span class='fu'>plot_na_hclust</span>(
+  <span class='no'>x</span>,
+  <span class='kw'>main</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>col.left</span> <span class='kw'>=</span> <span class='st'>"#009E73"</span>,
+  <span class='kw'>col.right</span> <span class='kw'>=</span> <span class='st'>"#56B4E9"</span>,
+  <span class='kw'>typographic</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -144,6 +150,11 @@
       <th>col.right</th>
       <td><p>character. The color of right legend that is percentage of NA. default is "#56B4E9".</p></td>
     </tr>
+    <tr>
+      <th>typographic</th>
+      <td><p>logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
+The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -161,11 +172,17 @@ for each combination of variables.</p>
 
 <span class='co'># Visualize pareto chart for variables with missing value.</span>
 <span class='fu'>plot_na_hclust</span>(<span class='no'>carseats</span>)</div><div class='img'><img src='plot_na_hclust-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_na_hclust</span>(<span class='no'>airquality</span>)</div><div class='img'><img src='plot_na_hclust-2.png' alt='' width='700' height='433' /></div><div class='input'>
-
 <span class='co'># Visualize pareto chart for variables with missing value.</span>
-<span class='fu'>plot_na_hclust</span>(<span class='kw pkg'>mice</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/mice/man/boys.html'>boys</a></span>)</div><div class='img'><img src='plot_na_hclust-3.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='kw'>if</span> (!<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"mice"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)) {
+  <span class='fu'><a href='https://rdrr.io/r/base/stop.html'>stop</a></span>(<span class='st'>"Package \"mice\" needed for this function to work. Please install it."</span>,
+  <span class='kw'>call.</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+}
+
+<span class='fu'>plot_na_hclust</span>(<span class='kw pkg'>mice</span><span class='kw ns'>::</span><span class='no'><a href='https://amices.org/mice/reference/boys.html'>boys</a></span>)</div><div class='img'><img src='plot_na_hclust-3.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Change the main title.</span>
-<span class='fu'>plot_na_hclust</span>(<span class='kw pkg'>mice</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/mice/man/boys.html'>boys</a></span>, <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>"Distribution of missing value"</span>)</div><div class='img'><img src='plot_na_hclust-4.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>plot_na_hclust</span>(<span class='kw pkg'>mice</span><span class='kw ns'>::</span><span class='no'><a href='https://amices.org/mice/reference/boys.html'>boys</a></span>, <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>"Distribution of missing value"</span>)</div><div class='img'><img src='plot_na_hclust-4.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># Not support typographic elements</span>
+<span class='fu'>plot_na_hclust</span>(<span class='kw pkg'>mice</span><span class='kw ns'>::</span><span class='no'><a href='https://amices.org/mice/reference/boys.html'>boys</a></span>, <span class='kw'>typographic</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='img'><img src='plot_na_hclust-5.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -62,49 +62,45 @@ diagnose_outlier(flights) %>%
   arrange(desc(rate)) %>% 
   select(-outliers_cnt)
 
-## ----plot_outlier, fig.align='center', fig.width = 6, fig.height = 4----------
+## ----plot_outlier, fig.align='center', fig.width = 7, fig.height = 5----------
 flights %>%
   plot_outlier(arr_delay) 
 
-## ----plot_outlier_pipe, fig.align='center', fig.width = 6, fig.height = 4-----
+## ----plot_outlier_pipe, fig.align='center', fig.width = 7, fig.height = 5-----
 flights %>%
   plot_outlier(diagnose_outlier(flights) %>% 
-                 filter(outliers_ratio >= 0.5) %>% 
+                 filter(outliers_ratio >= 5) %>% 
                  select(variables) %>% 
                  unlist())
 
-## ----plot_na_pareto1, fig.align='center', fig.width = 6, fig.height = 4-------
+## ----plot_na_pareto1, fig.align='center', fig.width = 7, fig.height = 5-------
 mice::boys %>% 
   plot_na_pareto(col = "blue")
 
-## ----plot_na_pareto2, fig.align='center', fig.width = 6, fig.height = 4-------
+## ----plot_na_pareto2, fig.align='center', fig.width = 7, fig.height = 5-------
 mice::boys %>% 
   plot_na_pareto(only_na = TRUE, main = "Pareto Chart for mice::boys")
 
-## ----plot_na_pareto3, fig.align='center', fig.width = 6, fig.height = 4-------
+## ----plot_na_pareto3, fig.align='center', fig.width = 7, fig.height = 5-------
 mice::boys %>% 
   plot_na_pareto(grade = list(High = 0.1, Middle = 0.6, Low = 1), relative = TRUE)
 
-## ----plot_na_pareto4, fig.align='center', fig.width = 6, fig.height = 4-------
+## ----plot_na_pareto4, fig.align='center', fig.width = 7, fig.height = 5-------
 plot_na_pareto(mice::boys, only_na = TRUE, plot = FALSE)
 
-## ----plot_na_hclust, fig.align='center', fig.width = 6, fig.height = 4--------
+## ----plot_na_hclust, fig.align='center', fig.width = 7, fig.height = 5--------
 mice::boys %>% 
   plot_na_hclust(main = "Distribution of missing value")
 
-## ----plot_na_hclust1, fig.align='center', fig.width = 6, fig.height = 4-------
+## ----plot_na_hclust1, fig.align='center', fig.width = 7, fig.height = 5-------
 mice::boys %>% 
   plot_na_intersect()
 
-## ----plot_na_hclust2, fig.align='center', fig.width = 6, fig.height = 4-------
-mice::boys %>% 
-  plot_na_intersect(only_na = FALSE)
-
-## ----plot_na_hclust3, fig.align='center', fig.width = 6, fig.height = 4-------
+## ----plot_na_hclust3, fig.align='center', fig.width = 7, fig.height = 5-------
 mice::boys %>%
   plot_na_intersect(n_vars = 5)
 
-## ----plot_na_hclust4, fig.align='center', fig.width = 6, fig.height = 4-------
+## ----plot_na_hclust4, fig.align='center', fig.width = 7, fig.height = 5-------
 mice::boys %>%
   plot_na_intersect(only_na = FALSE, n_intersacts = 7)
 
@@ -120,26 +116,17 @@ mice::boys %>%
 #  flights %>%
 #    diagnose_report(output_format = "html", output_file = "Diagn.html")
 
-## ----diag_title_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Data Diagnostic Report Cover"----
+## ----diag_title_pdf, echo=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="Data Diagnostic Report Cover"----
 knitr::include_graphics('img/diagn_title_pdf.png')
 
-## ----diag_agenda_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Data Diagnostic Report Contents"----
+## ----diag_agenda_pdf, echo=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="Data Diagnostic Report Contents"----
 knitr::include_graphics('img/diagn_agenda_pdf.png')
 
-## ----diag_intro_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Sample data diagnostic report table"----
+## ----diag_intro_pdf, echo=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="Sample data diagnostic report table"----
 knitr::include_graphics('img/diag_intro_pdf.png')
 
-## ----diag_outlier_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Data diagnosis report outlier diagnosis contents"----
+## ----diag_outlier_pdf, echo=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="Data diagnosis report outlier diagnosis contents"----
 knitr::include_graphics('img/diag_outlier_pdf.png')
-
-## ----diag_egenda_html, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Data Diagnostic report titles and table of contents"----
-knitr::include_graphics('img/diag_agenda_html.png')
-
-## ----diag_table_html, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Sample data diagnostic report table (html)"----
-knitr::include_graphics('img/diag_table_html.png')
-
-## ----diag_outlier_html, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Data diagnosis report outlier diagnosis contents (html)"----
-knitr::include_graphics('img/diag_outlier_html.png')
 
 ## ----dbi_table, warning=FALSE, message=FALSE----------------------------------
 if (!require(DBI)) install.packages('DBI')
@@ -203,17 +190,18 @@ con_sqlite %>%
   diagnose_outlier()  %>%
   filter(outliers_ratio > 1)
 
-## ----plot_outlier_dbi, fig.align='center', fig.width = 6, fig.height = 4------
-# Visualization of numerical variables with a ratio of
-# outliers greater than 1%
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  plot_outlier(con_sqlite %>% 
-                 tbl("TB_CARSEATS") %>% 
-                 diagnose_outlier() %>%
-                 filter(outliers_ratio > 1) %>%
-                 select(variables) %>%
-                 pull())
+## ----plot_outlier_dbi, fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE----
+#  # Visualization of numerical variables with a ratio of
+#  # outliers greater than 1%
+#  # the result is same as a data.frame, but not display here. reference above in document.
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    plot_outlier(con_sqlite %>%
+#                   tbl("TB_CARSEATS") %>%
+#                   diagnose_outlier() %>%
+#                   filter(outliers_ratio > 1) %>%
+#                   select(variables) %>%
+#                   pull())
 
 ## ----dbi_diag_report, eval=FALSE----------------------------------------------
 #  # create pdf file. file name is DataDiagnosis_Report.pdf

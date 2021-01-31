@@ -116,7 +116,7 @@ plot_normality <- function(.data, ...) {
 normality.data.frame <- function(.data, ..., sample = 5000) {
   sample <- min(5000, nrow(.data), sample)
   .data <- sample_n(.data, sample)
-
+  
   vars <- tidyselect::vars_select(names(.data), !!! rlang::quos(...))
   normality_impl(.data, vars, sample)
 }
@@ -124,21 +124,21 @@ normality.data.frame <- function(.data, ..., sample = 5000) {
 #' @importFrom stats shapiro.test
 normality_impl <- function(df, vars, sample) {
   if (length(vars) == 0) vars <- names(df)
-
+  
   if (length(vars) == 1 & !tibble::is_tibble(df)) df <- as_tibble(df)
-
+  
   idx_numeric <- find_class(df[, vars], type = "numerical")
-
+  
   num_normal <- function(x) {
     x <- x[which(!is.infinite(x))]
     
     result <- shapiro.test(x)
-
+    
     tibble(statistic = result$statistic, p_value = result$p.value)
   }
-
+  
   statistic <- lapply(vars[idx_numeric], function(x) num_normal(pull(df, x)))
-
+  
   tibble(vars = vars[idx_numeric], statistic, sample = sample) %>%
     tidyr::unnest(cols = c(statistic)) %>%
     select(vars, statistic, p_value, sample)
@@ -158,17 +158,17 @@ normality.grouped_df <- function(.data, ..., sample = 5000) {
 #' @importFrom stats shapiro.test
 normality_group_impl <- function(df, vars, sample) {
   if (length(vars) == 0) vars <- names(df)
-
+  
   if (length(vars) == 1 & !tibble::is_tibble(df)) df <- as_tibble(df)
-
+  
   idx_numeric <- find_class(df[, vars], type = "numerical")
-
+  
   if (utils::packageVersion("dplyr") >= "0.8.0") flag <- 0
   else flag <- 1
   
   num_normal <- function(x, .data, vars, n_sample) {
     nums <- .data[x + flag, vars][[1]]
-
+    
     n_sample <- min(length(nums), n_sample)
     
     x <- sample(nums, n_sample)
@@ -185,7 +185,7 @@ normality_group_impl <- function(df, vars, sample) {
              sample = n_sample)
     }        
   }
-
+  
   call_normal <- function(vars) {
     #idx <- which(sapply(attr(df, "indices"), length) >= 3)
     if (utils::packageVersion("dplyr") >= "0.8.0") {
@@ -203,11 +203,11 @@ normality_group_impl <- function(df, vars, sample) {
     }  
     
     dplyr::bind_cols(tibble(variable = rep(vars, nrow(statistic))),
-      as_tibble(glables), statistic)
+                     as_tibble(glables), statistic)
   }
-
+  
   statistic <- lapply(vars[idx_numeric], function(x) call_normal(x))
-
+  
   tibble(statistic) %>%
     tidyr::unnest(cols = c(statistic))
 }
@@ -261,7 +261,10 @@ normality_group_impl <- function(df, vars, sample) {
 #' lower left corner. The default is "log".
 #' @param right character. Specifies the data transformation method to draw the histogram in the 
 #' lower right corner. The default is "sqrt".
-#'
+#' @param col a color to be used to fill the bars. The default is "steelblue".
+#' @param typographic logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
+#' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package.
+#' 
 #' @seealso \code{\link{plot_normality.tbl_dbi}}, \code{\link{plot_outlier.data.frame}}.
 #' @export
 #' @examples
@@ -270,18 +273,23 @@ normality_group_impl <- function(df, vars, sample) {
 #' carseats <- ISLR::Carseats
 #' carseats[sample(seq(NROW(carseats)), 20), "Income"] <- NA
 #' carseats[sample(seq(NROW(carseats)), 5), "Urban"] <- NA
+#' 
+#' carseats <- carseats[, c("Income", "Price", "ShelveLoc", "Sales", "Urban", "US")]
 #'
 #' # Visualization of all numerical variables
 #' plot_normality(carseats)
 #'
 #' # Select the variable to plot
 #' plot_normality(carseats, Income, Price)
-#' plot_normality(carseats, -Income, -Price)
+#' plot_normality(carseats, -Income, -Price, col = "gray")
 #' plot_normality(carseats, 1)
 #'
 #' # Change the method of transformation
 #' plot_normality(carseats, Income, right = "1/x")
 #' plot_normality(carseats, Income, left = "Box-Cox", right = "Yeo-Johnson")
+#' 
+#' # Not allow typographic elements
+#' plot_normality(carseats, Income, typographic = FALSE)
 #' 
 #' # Using dplyr::grouped_df
 #' library(dplyr)
@@ -300,8 +308,8 @@ normality_group_impl <- function(df, vars, sample) {
 #' plot_normality(Income, Price)
 #'
 #' # Positions values select variables
-#' carseats %>%
-#'  plot_normality(1)
+#' # carseats %>%
+#' #  plot_normality(1)
 #'
 #' # Using pipes & dplyr -------------------------
 #' # Plot 'Sales' variable by 'ShelveLoc' and 'US'
@@ -324,49 +332,172 @@ normality_group_impl <- function(df, vars, sample) {
 plot_normality.data.frame <- function(.data, ..., left = c("log", "sqrt", "log+1", "log+a", "1/x", "x^2", 
                                                            "x^3", "Box-Cox", "Yeo-Johnson"),
                                       right = c("sqrt", "log", "log+1", "log+a", "1/x", "x^2", 
-                                                "x^3", "Box-Cox", "Yeo-Johnson")) {
+                                                "x^3", "Box-Cox", "Yeo-Johnson"),
+                                      col = "steelblue", typographic = TRUE) {
   vars <- tidyselect::vars_select(names(.data), !!! rlang::quos(...))
   
   left <- match.arg(left)
   right <- match.arg(right)
   
-  plot_normality_impl(.data, vars, left, right)
+  plot_normality_impl(.data, vars, left, right, col, typographic)
 }
 
 #' @importFrom stats qqline qqnorm
-plot_normality_impl <- function(df, vars, left, right) {
+plot_normality_impl <- function(df, vars, left, right, col = "steelblue", typographic = TRUE) {
   if (length(vars) == 0) vars <- names(df)
-
+  
   if (length(vars) == 1 & !tibble::is_tibble(df)) df <- as_tibble(df)
-
+  
   idx_numeric <- find_class(df[, vars], type = "numerical")
-
-  plot_normality <- function(df, var, left, right) {
+  
+  plot_normality <- function(df, var, left, right, col = "steelblue", typographic = TRUE) {
     x <- pull(df, var)
-
-    op <- par(no.readonly = TRUE)
-    par(mfrow = c(2, 2), oma = c(0, 0, 3, 0), mar = c(2, 4, 2, 2))
-    on.exit(par(op))
-
-    hist(x, col = "lightblue", las = 1, main = "origin")
     
-    x2 <- x[which(!is.infinite(x))]
+    main <- sprintf("Normality Diagnosis Plot (%s)", var) 
     
-    qqnorm(x2, main = "origin: Q-Q plot")
-    qqline(x2)
-
-    trans_left <- get_transform(x, left)
-    trans_right <- get_transform(x, right)
-    
-    hist(trans_left, col = "lightblue", las = 1, main = paste(left, "transformation"))
-    hist(trans_right, col = "lightblue", las = 1, main = paste(right, "transformation"))
-
-    title(sprintf("Normality Diagnosis Plot (%s)", var), outer = TRUE)
+    plot_normality_raw(x, left, right, main, col, typographic)
   }
-
-  tmp <- lapply(vars[idx_numeric], function(x) plot_normality(df, x, left, right))
+  
+  invisible(lapply(vars[idx_numeric], function(x) 
+    plot_normality(df, x, left, right, col, typographic)))
 }
 
+
+#' @import dplyr
+#' @import ggplot2
+#' @import hrbrthemes
+#' @importFrom gridExtra grid.arrange
+#' @importFrom grid textGrob gpar
+plot_normality_raw <- function(x, left = c("log", "sqrt", "log+1", "log+a", "1/x", "x^2", 
+                                           "x^3", "Box-Cox", "Yeo-Johnson"),
+                               right = c("sqrt", "log", "log+1", "log+a", "1/x", "x^2", 
+                                         "x^3", "Box-Cox", "Yeo-Johnson"),
+                               main = NULL, col = "steelblue", typographic = TRUE) {
+  left <- match.arg(left)
+  right <- match.arg(right)
+  
+  main <- ifelse(is.null(main), "Normality Diagnose Plot", main)
+  
+  df <- data.frame(x = x) %>% 
+    filter(!is.na(x))
+  
+  # calulate number of bins using Sturges' formula
+  n_bins <- round(log2(nrow(df)) + 1)
+  
+  null_theme <- theme(
+    axis.title = element_text(color = "transparent"),
+    axis.text = element_text(color = "transparent"), 
+    axis.ticks = element_line(color = "transparent"),
+    panel.grid = element_line(color = "transparent"),
+    axis.line = element_blank(),
+    panel.background = element_rect(fill = "transparent",colour = NA),
+    plot.background = element_rect(fill = "transparent",colour = NA)
+  )
+  
+  top_left <- df %>% 
+    ggplot(aes(x)) +
+    geom_histogram(fill = col, color = "black", alpha = 0.8, bins = n_bins) +
+    labs(title = "origin", x = "", y = "")
+  
+  top_right <- df %>% 
+    filter(!is.infinite(x)) %>% 
+    ggplot(aes(sample = x, group = 1)) +
+    stat_qq(color = col) + 
+    stat_qq_line() +
+    labs(title = "origin: Q-Q plot", x = "", y = "")
+  
+  suppressWarnings(df_left <- df %>% 
+                     mutate(x = get_transform(x, left)))
+  
+  non_finite_left <- FALSE
+  if (sum(is.finite(df_left$x)) == 0)
+    non_finite_left <- TRUE
+  
+  if (non_finite_left) {
+    bottom_left <- data.frame(x = 1, y = 1, msg = "All transfomed data is not finite") %>% 
+      ggplot(aes(x = x, y = y, label = msg)) +
+      geom_text() +
+      labs(title = paste(left, "transformation"), x = "", y = "") +
+      null_theme
+  } else {
+    bottom_left <- df_left %>% 
+      ggplot(aes(x)) +
+      geom_histogram(fill = col, color = "black", alpha = 0.8, bins = n_bins) +
+      labs(title = paste(left, "transformation"), x = "", y = "")
+  }
+  
+  suppressWarnings(df_right <- df %>% 
+                     mutate(x = get_transform(x, right)))
+  
+  non_finite_right <- FALSE
+  if (sum(is.finite(df_right$x)) == 0)
+    non_finite_right <- TRUE
+  
+  if (non_finite_right) {
+    bottom_right <- data.frame(x = 1, y = 1, msg = "All transfomed data is not finite") %>% 
+      ggplot(aes(x = x, y = y, label = msg)) +
+      geom_text() +
+      labs(title = paste(left, "transformation"), x = "", y = "") +
+      null_theme
+  } else {
+    bottom_right <- df_right %>% 
+      ggplot(aes(x)) +
+      geom_histogram(fill = col, color = "black", alpha = 0.8, bins = n_bins) +
+      labs(title = paste(right, "transformation"), x = "", y = "")
+  }
+  
+  if (typographic) {
+    top_left <- top_left +
+      theme_typographic() +
+      theme(plot.title = element_text(size = 15, face = "plain"),
+            plot.margin = margin(20, 30, 10, 30))
+    
+    top_right <- top_right +
+      theme_typographic() +
+      theme(plot.title = element_text(size = 15, face = "plain"),
+            plot.margin = margin(20, 30, 10, 30))
+    
+    if (non_finite_left) {
+      bottom_left <- bottom_left +
+        theme_typographic() +
+        theme(panel.grid = element_blank(),
+              plot.title = element_text(size = 15, face = "plain"),
+              plot.margin = margin(10, 30, 20, 30)) +
+        null_theme
+    } else {
+      bottom_left <- bottom_left +
+        theme_typographic() +
+        theme(plot.title = element_text(size = 15, face = "plain"),
+              plot.margin = margin(10, 30, 20, 30))
+    }
+    
+    if (non_finite_right) {
+      bottom_right <- bottom_right +
+        theme_typographic() +
+        theme(panel.grid = element_blank(),
+              plot.title = element_text(size = 15, face = "plain"),
+              plot.margin = margin(10, 30, 20, 30)) +
+        null_theme
+    } else {
+      bottom_right <- bottom_right +
+        theme_typographic() +
+        theme(plot.title = element_text(size = 15, face = "plain"),
+              plot.margin = margin(10, 30, 20, 30))
+    }
+    
+    fontfamily <- get_font_family()
+    
+    top <- grid::textGrob(main, gp = grid::gpar(fontfamily = fontfamily, 
+                                                fontsize = 18, font = 2),
+                          x = unit(0.075, "npc"), just = "left")
+    
+  } else {
+    top <- main
+  }
+  
+  suppressWarnings(gridExtra::grid.arrange(top_left, top_right, bottom_left, bottom_right, 
+                                           ncol = 2, nrow = 2, top = top))
+}
 
 #' @method plot_normality grouped_df
 #' @importFrom tidyselect vars_select
@@ -376,30 +507,34 @@ plot_normality_impl <- function(df, vars, left, right) {
 plot_normality.grouped_df <- function(.data, ..., left = c("log", "sqrt", "log+1", "log+a", "1/x", "x^2", 
                                                            "x^3", "Box-Cox", "Yeo-Johnson"),
                                       right = c("sqrt", "log", "log+1", "log+a", "1/x", "x^2", 
-                                                "x^3", "Box-Cox", "Yeo-Johnson")) {
+                                                "x^3", "Box-Cox", "Yeo-Johnson"),
+                                      col = "steelblue", typographic = TRUE) {
   vars <- tidyselect::vars_select(names(.data), !!! rlang::quos(...))
   
   left <- match.arg(left)
   right <- match.arg(right)
   
-  plot_normality_group_impl(.data, vars, left, right)
+  plot_normality_group_impl(.data, vars, left, right, col, typographic)
 }
 
-#' @importFrom stats qqline qqnorm
-#' @importFrom graphics text
-plot_normality_group_impl <- function(df, vars, left, right) {
+
+#' @import dplyr
+#' @importFrom utils packageVersion
+#' @importFrom tidyselect matches
+#' @importFrom tibble is_tibble as_tibble
+plot_normality_group_impl <- function(df, vars, left, right, col = "steelblue", typographic = TRUE) {
   if (length(vars) == 0) vars <- names(df)
-
-  if (length(vars) == 1 & !tibble::is_tibble(df)) df <- as_tibble(df)
-
+  
+  if (length(vars) == 1 & !tibble::is_tibble(df)) df <- tibble::as_tibble(df)
+  
   idx_numeric <- find_class(df[, vars], type = "numerical")
-
-  call_plot <- function(var, left, right) {
-    plot_normality <- function(pos, df, var) {
+  
+  call_plot <- function(var, left, right, col = "steelblue", typographic = TRUE) {
+    plot_normality <- function(pos, df, var, col = "steelblue", typographic = TRUE) {
       if (utils::packageVersion("dplyr") >= "0.8.0") {
         x <- unlist(df[(attr(df, "groups") %>% 
-                         select(tidyselect::matches("\\.rows")) %>% 
-                         pull)[[pos]], var])
+                          select(tidyselect::matches("\\.rows")) %>% 
+                          pull)[[pos]], var])
         
         label <- attr(df, "groups") %>% select(-tidyselect::matches("\\.rows"))
       } else {
@@ -407,51 +542,24 @@ plot_normality_group_impl <- function(df, vars, left, right) {
         
         label <- attr(df, "labels")
       }  
-
+      
       label <- paste(names(label), "==", unlist(label[pos, ]), collapse = ",")
       
-      op <- par(no.readonly = TRUE)
-      par(mfrow = c(2, 2), oma = c(0, 0, 3, 0), mar = c(2, 4, 2, 2))
-      on.exit(par(op))
-
-      hist(x, col = "lightblue", las = 1, main = "origin")
-      qqnorm(x, main = "origin: Q-Q plot")
-      qqline(x)
-
-      trans_left <- get_transform(x, left)
-      trans_right <- get_transform(x, right)
-      
-      finite_left_cnt <- sum(is.finite(trans_left))
-      finite_right_cnt <- sum(is.finite(trans_right))
-      
-      if (finite_left_cnt == 0) {
-        plot(0, axes = FALSE, type = "n", xlab = "", ylab = "")
-        text(1, 0, "All transfomed data is infinite", cex = 1.1)
-      } else {
-        hist(trans_left, col = "lightblue", las = 1, main = paste(left, "transformation"))
-      }
-      
-      if (finite_right_cnt == 0) {
-        plot(0, axes = FALSE, type = "n", xlab = "", ylab = "")
-        text(1, 0, "All transfomed data is infinite", cex = 1.1)
-      } else {
-        hist(trans_right, col = "lightblue", las = 1, main = paste(right, "transformation"))
-      }
-
-      title(sprintf("Normality Diagnosis Plot\n(%s by %s)", var, label),
-            outer = TRUE)
+      main <- sprintf("Normality Diagnosis Plot\n(%s by %s)", var, label)
+      plot_normality_raw(x, left, right, main, col, typographic)
     }
-
+    
     if (utils::packageVersion("dplyr") >= "0.8.0") {
       cnt <- nrow(attr(df, "groups")) 
     } else {
       cnt <- nrow(attr(df, "labels"))
     } 
     
-    lapply(seq(cnt), plot_normality, df, var)
+    lapply(seq(cnt), plot_normality, df, var, col, typographic)
   }
-
-  tmp <- lapply(vars[idx_numeric], function(x) call_plot(x, left, right))
+  
+  invisible(lapply(vars[idx_numeric], function(x) 
+    call_plot(x, left, right, col, typographic)))
 }
 
 
@@ -489,7 +597,7 @@ plot_normality_group_impl <- function(df, vars, left, right) {
 #' # log transform 
 #' get_transform(iris$Sepal.Length, "Yeo-Johnson")
 #' }
-#' @importFrom forecast BoxCox.lambda BoxCox
+#' 
 get_transform <- function(x, method = c("log", "sqrt", "log+1", "log+a", "1/x", 
                                         "x^2", "x^3", "Box-Cox", "Yeo-Johnson")) {
   get_boxcox <- function(x) {
@@ -521,8 +629,14 @@ get_transform <- function(x, method = c("log", "sqrt", "log+1", "log+a", "1/x",
     result <- x^3
   else if (method == "Box-Cox") 
     result <- get_boxcox(x)
-  else if (method == "Yeo-Johnson") 
+  else if (method == "Yeo-Johnson") {
+    if (!requireNamespace("forecast", quietly = TRUE)) {
+      stop("Package \"forecast\" needed for this function to work. Please install it.",
+           call. = FALSE)
+    }
+    
     result <- get_yjohnson(x)
+  }
   
   result
 }

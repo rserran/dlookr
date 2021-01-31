@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dlookr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.1</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
 </li>
 <li>
   <a href="https://github.com/choonghyunryu/dlookr/">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -185,7 +185,7 @@ to help determine whether the imputed value is used in the analysis.</p>
 <span class='no'>carseats</span>[<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>carseats</span>)), <span class='fl'>20</span>), <span class='st'>"Income"</span>] <span class='kw'>&lt;-</span> <span class='fl'>NA</span>
 <span class='no'>carseats</span>[<span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>NROW</a></span>(<span class='no'>carseats</span>)), <span class='fl'>5</span>), <span class='st'>"Urban"</span>] <span class='kw'>&lt;-</span> <span class='fl'>NA</span>
 
-<span class='co'># Replace the outliers of the Price variable with median</span>
+<span class='co'># Replace the outliers of the Price variable with median.</span>
 <span class='fu'>imputate_outlier</span>(<span class='no'>carseats</span>, <span class='no'>Price</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"median"</span>)</div><div class='output co'>#&gt;   [1] 120  83  80  97 128  72 108 120 124 124 100  94 136  86 118 144 110 131  68 121 131
 #&gt;  [22] 109 138 109 113  82 131 107  97 102  89 131 137 128 128  96 100 110 102 138 126 124
 #&gt;  [43] 117 134  95 135  70 108  98 149 108 108 129 119 144 154  84 117 103 114 123 107 133
@@ -222,7 +222,7 @@ to help determine whether the imputed value is used in the analysis.</p>
 #&gt; [1] TRUE
 #&gt; attr(,"class")
 #&gt; [1] "imputation" "numeric"   </div><div class='input'>
-<span class='co'># Replace the outliers of the Price variable with capping</span>
+<span class='co'># Replace the outliers of the Price variable with capping.</span>
 <span class='fu'>imputate_outlier</span>(<span class='no'>carseats</span>, <span class='no'>Price</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"capping"</span>)</div><div class='output co'>#&gt;   [1] 120.00  83.00  80.00  97.00 128.00  72.00 108.00 120.00 124.00 124.00 100.00  94.00
 #&gt;  [13] 136.00  86.00 118.00 144.00 110.00 131.00  68.00 121.00 131.00 109.00 138.00 109.00
 #&gt;  [25] 113.00  82.00 131.00 107.00  97.00 102.00  89.00 131.00 137.00 128.00 128.00  96.00
@@ -286,7 +286,7 @@ to help determine whether the imputed value is used in the analysis.</p>
 #&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #555555;'>1</span><span> No     114.       114.
 #&gt; </span><span style='color: #555555;'>2</span><span> Yes    117.       117.</div><div class='input'>
-<span class='co'># If the variable of interest is a numerical variable</span>
+<span class='co'># If the variable of interest is a numerical variables</span>
 <span class='no'>price</span> <span class='kw'>&lt;-</span> <span class='fu'>imputate_outlier</span>(<span class='no'>carseats</span>, <span class='no'>Price</span>)
 <span class='no'>price</span></div><div class='output co'>#&gt;   [1] 120.00  83.00  80.00  97.00 128.00  72.00 108.00 120.00 124.00 124.00 100.00  94.00
 #&gt;  [13] 136.00  86.00 118.00 144.00 110.00 131.00  68.00 121.00 131.00 109.00 138.00 109.00
@@ -365,7 +365,9 @@ to help determine whether the imputed value is used in the analysis.</p>
 #&gt; p90      146.0000000 146.0000000
 #&gt; p95      155.0500000 155.0025000
 #&gt; p99      166.0500000 164.0200000
-#&gt; p100     191.0000000 173.0000000</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>price</span>)</div><div class='img'><img src='imputate_outlier-1.png' alt='' width='700' height='433' /></div></span></pre>
+#&gt; p100     191.0000000 173.0000000</div><div class='input'>
+# plot(price)
+</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

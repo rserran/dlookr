@@ -14,7 +14,8 @@ plot_bar_category(.data, ...)
   top = 10,
   add_character = TRUE,
   title = "Frequency by levels of category",
-  each = FALSE
+  each = FALSE,
+  typographic = TRUE
 )
 
 \method{plot_bar_category}{grouped_df}(
@@ -23,7 +24,8 @@ plot_bar_category(.data, ...)
   top = 10,
   add_character = TRUE,
   title = "Frequency by levels of category",
-  each = FALSE
+  each = FALSE,
+  typographic = TRUE
 )
 }
 \arguments{
@@ -48,6 +50,9 @@ diagnosis of categorical data. The default value is TRUE, which also includes ch
 
 \item{each}{logical. Specifies whether to draw multiple plots on one screen. 
 The default is FALSE, which draws multiple plots on one screen.}
+
+\item{typographic}{logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
+The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package.}
 }
 \description{
 The plot_bar_category() to visualizes the distribution of 
@@ -72,31 +77,37 @@ carseats$Test[1:30] <- NA
 plot_bar_category(carseats)
 
 # Select the variable to diagnose
-plot_bar_category(carseats, "ShelveLoc", "Urban")
-plot_bar_category(carseats, -ShelveLoc, -Urban)
+# plot_bar_category(carseats, "ShelveLoc", "Urban")
+# plot_bar_category(carseats, -ShelveLoc, -Urban)
+
+# Visualize the each plots
+plot_bar_category(carseats, each = TRUE)
+
+# Not allow typographic argument
+# plot_bar_category(carseats, typographic = FALSE)
 
 # Using pipes ---------------------------------
 library(dplyr)
 
 # Plot of all categorical variables
-carseats \%>\%
-  plot_bar_category()
+#carseats \%>\%
+#   plot_bar_category()
 
 # Visualize just 7 levels of top frequency
 carseats \%>\%
   plot_bar_category(top = 7)
    
 # Visualize only factor, not character
-carseats \%>\%
-  plot_bar_category(add_character = FALSE) 
+# carseats \%>\%
+#   plot_bar_category(add_character = FALSE) 
   
 # Using groupd_df  ------------------------------
 carseats \%>\% 
   group_by(ShelveLoc) \%>\% 
-  plot_bar_category()
+  plot_bar_category(top = 5)
   
-carseats \%>\% 
-  group_by(ShelveLoc) \%>\% 
-  plot_bar_category(each = TRUE)  
+# carseats \%>\% 
+#   group_by(ShelveLoc) \%>\% 
+#   plot_bar_category(each = TRUE, top = 5)  
   
 }

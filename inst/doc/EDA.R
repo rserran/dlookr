@@ -83,11 +83,11 @@ carseats %>%
   normality(log_income) %>%
   filter(p_value > 0.01)
 
-## ----plot_normality, fig.align='center', fig.width = 6, fig.height = 4--------
+## ----plot_normality, fig.align='center', fig.width = 7, fig.height = 5--------
 # Select columns by name
 plot_normality(carseats, Sales, CompPrice)
 
-## ----plot_normality2, fig.align='center', fig.width = 6, fig.height = 4-------
+## ----plot_normality2, fig.align='center', fig.width = 7, fig.height = 5-------
 carseats %>%
   filter(ShelveLoc == "Good") %>%
   group_by(US) %>%
@@ -118,7 +118,7 @@ carseats %>%
   correlate(Sales) %>%
   filter(abs(coef_corr) > 0.5)
 
-## ----plot_correlate, fig.align='center', fig.width = 6, fig.height = 4--------
+## ----plot_correlate, fig.align='center', fig.width = 7, fig.height = 5--------
 plot_correlate(carseats)
 
 ## ----plot_correlate2, fig.align='center', fig.width = 6, fig.height = 4-------
@@ -128,7 +128,7 @@ plot_correlate(carseats, Sales, Price)
 ## ----plot_correlate3, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
 carseats %>%
   filter(ShelveLoc == "Good") %>%
-  group_by(Urban, US) %>%
+  group_by(Urban) %>%
   plot_correlate(Sales)
 
 ## ----target_by----------------------------------------------------------------
@@ -140,7 +140,7 @@ cat_num <- relate(categ, Sales)
 cat_num
 summary(cat_num)
 
-## ----target_by3, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
+## ----target_by3, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE----
 plot(cat_num)
 
 ## ----target_by4---------------------------------------------------------------
@@ -149,7 +149,7 @@ cat_cat <- relate(categ, ShelveLoc)
 cat_cat
 summary(cat_cat)
 
-## ----target_by5, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
+## ----target_by5, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE----
 plot(cat_cat)
 
 ## ----target_by6---------------------------------------------------------------
@@ -162,10 +162,10 @@ num_num <- relate(num, Price)
 num_num
 summary(num_num)
 
-## ----target_by8, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
+## ----target_by8, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE----
 plot(num_num)
 
-## ----target_by8_2, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
+## ----target_by8_2, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE----
 plot(num_num, hex_thres = 350)
 
 ## ----target_by9---------------------------------------------------------------
@@ -174,7 +174,7 @@ num_cat <- relate(num, ShelveLoc)
 num_cat
 summary(num_cat)
 
-## ----target_by10, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
+## ----target_by10, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE----
 plot(num_cat)
 
 ## ----eda_report, eval=FALSE---------------------------------------------------
@@ -185,35 +185,26 @@ plot(num_cat)
 #  carseats %>%
 #    eda_report(target = Sales, output_format = "html", output_file = "EDA_carseats.html")
 
-## ----eda_title_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="EDA report cover"----
+## ----eda_title_pdf, echo=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="EDA report cover"----
 knitr::include_graphics('img/eda_title_pdf.png')
 
-## ----eda_agenda_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="EDA Report Contents"----
+## ----eda_agenda_pdf, echo=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="EDA Report Contents"----
 knitr::include_graphics('img/eda_agenda_pdf.png')
 
-## ----eda_intro_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Example EDA report table"----
+## ----eda_intro_pdf, echo=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="Example EDA report table"----
 knitr::include_graphics('img/eda_intro_pdf.png')
 
-## ----eda_normality_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Normality test information in EDA reports"----
+## ----eda_normality_pdf, echo=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="Normality test information in EDA reports"----
 knitr::include_graphics('img/eda_normality_pdf.png')
 
-## ----eda_correlation_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Correlation information in EDA reports"----
-knitr::include_graphics('img/eda_correlation_pdf.png')
+## ----eda_correlation_pdf, echo=FALSE, eval=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="Correlation information in EDA reports"----
+#  knitr::include_graphics('img/eda_correlation_pdf.png')
 
-## ----eda_lm_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Linear relationship information in EDA reports"----
+## ----eda_lm_pdf, echo=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="Linear relationship information in EDA reports"----
 knitr::include_graphics('img/eda_lm_pdf.png')
 
-## ----eda_anova_pdf, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="Information about ANOVA in EDA reports"----
+## ----eda_anova_pdf, echo=FALSE, out.width='60%', fig.align='center', fig.pos="!h", fig.cap="Information about ANOVA in EDA reports"----
 knitr::include_graphics('img/eda_anova_pdf.png')
-
-## ----eda_egenda_html, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="EDA report titles and table of contents"----
-knitr::include_graphics('img/eda_agenda_html.png')
-
-## ----eda_table_html, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="EDA report table example (Web)"----
-knitr::include_graphics('img/eda_table_html.png')
-
-## ----eda_normality_html, echo=FALSE, out.width='70%', fig.align='center', fig.pos="!h", fig.cap="EDA Report Normality Test Information (Web)"----
-knitr::include_graphics('img/eda_normality_html.png')
 
 ## ----dbi_table, warning=FALSE, message=FALSE----------------------------------
 if (!require(DBI)) install.packages('DBI')
@@ -290,20 +281,15 @@ con_sqlite %>%
  normality(log_income) %>%
  filter(p_value > 0.01)
 
-## ----plot_normality_dbi, fig.align='center', fig.width = 6, fig.height = 4----
-# Plot 'Sales' variable by 'ShelveLoc' and 'US'
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  group_by(ShelveLoc, US) %>%
-  plot_normality(Sales)
-
-# extract only those with 'ShelveLoc' variable level is "Good",
-# and plot 'Income' by 'US'
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  filter(ShelveLoc == "Good") %>%
-  group_by(US) %>%
-  plot_normality(Income)
+## ----plot_normality_dbi, fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE----
+#  # extract only those with 'ShelveLoc' variable level is "Good",
+#  # and plot 'Income' by 'US'
+#  # the result is same as a data.frame, but not display here. reference above in document.
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    filter(ShelveLoc == "Good") %>%
+#    group_by(US) %>%
+#    plot_normality(Income)
 
 ## ----dbi_correlation----------------------------------------------------------
 # Correlation coefficient
@@ -339,15 +325,16 @@ con_sqlite %>%
   filter(coef_corr < 0) %>%
   filter(abs(coef_corr) > 0.5)
 
-## ----plot_correlation_dbi, fig.align='center', fig.width = 6, fig.height = 4----
-# Extract only those with 'ShelveLoc' variable level is "Good",
-# and visualize correlation plot of 'Sales' variable by 'Urban'
-# and 'US' variables.
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  filter(ShelveLoc == "Good") %>%
-  group_by(Urban, US) %>%
-  plot_correlate(Sales)
+## ----plot_correlation_dbi, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE, eval=FALSE----
+#  # Extract only those with 'ShelveLoc' variable level is "Good",
+#  # and visualize correlation plot of 'Sales' variable by 'Urban'
+#  # and 'US' variables.
+#  # the result is same as a data.frame, but not display here. reference above in document.
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    filter(ShelveLoc == "Good") %>%
+#    group_by(Urban) %>%
+#    plot_correlate(Sales)
 
 ## ----dbi_ctarget_by-----------------------------------------------------------
 # If the target variable is a categorical variable
@@ -358,8 +345,9 @@ cat_num <- relate(categ, Sales)
 cat_num
 summary(cat_num)
 
-## ----plot_target_by_dbi, fig.align='center', fig.align='center', fig.width = 6, fig.height = 4----
-plot(cat_num)
+## ----plot_target_by_dbi, fig.align='center', fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE----
+#  # the result is same as a data.frame, but not display here. reference above in document.
+#  plot(cat_num)
 
 ## ----dbi_diag_report, eval=FALSE----------------------------------------------
 #  ## target variable is categorical variable
