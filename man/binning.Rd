@@ -71,14 +71,18 @@ See vignette("transformation") for an introduction to these concepts.
 carseats <- ISLR::Carseats
 carseats[sample(seq(NROW(carseats)), 20), "Income"] <- NA
 carseats[sample(seq(NROW(carseats)), 5), "Urban"] <- NA
+
 # Binning the carat variable. default type argument is "quantile"
 bin <- binning(carseats$Income)
 # Print bins class object
 bin
+
 # Summarise bins class object
 summary(bin)
+
 # Plot bins class object
 plot(bin)
+
 # Using labels argument
 bin <- binning(carseats$Income, nbins = 4,
               labels = c("LQ1", "UQ1", "LQ3", "UQ3"))
@@ -86,12 +90,12 @@ bin
 # Using another type argument
 bin <- binning(carseats$Income, nbins = 5, type = "equal")
 bin
-bin <- binning(carseats$Income, nbins = 5, type = "pretty")
-bin
-bin <- binning(carseats$Income, nbins = 5, type = "kmeans")
-bin
-bin <- binning(carseats$Income, nbins = 5, type = "bclust")
-bin
+# bin <- binning(carseats$Income, nbins = 5, type = "pretty")
+# bin
+# bin <- binning(carseats$Income, nbins = 5, type = "kmeans")
+# bin
+# bin <- binning(carseats$Income, nbins = 5, type = "bclust")
+# bin
 
 x <- sample(1:1000, size = 50) * 12345679
 bin <- binning(x)
@@ -107,6 +111,7 @@ extract(bin)
 # -------------------------
 library(dplyr)
 
+# Compare binned frequency by ShelveLoc
 carseats \%>\%
  mutate(Income_bin = binning(carseats$Income) \%>\% 
                      extract()) \%>\%
@@ -115,7 +120,16 @@ carseats \%>\%
  arrange(desc(freq)) \%>\%
  head(10)
  
+ # Compare binned frequency by ShelveLoc using Viz
+ carseats \%>\%
+   mutate(Income_bin = binning(carseats$Income) \%>\% 
+           extract()) \%>\%
+   target_by(ShelveLoc) \%>\% 
+   relate(Income_bin) \%>\% 
+   plot()
+ 
 }
 \seealso{
-\code{\link{binning_by}}, \code{\link{print.bins}}, \code{\link{summary.bins}}.
+\code{\link{binning_by}}, \code{\link{print.bins}}, \code{\link{summary.bins}},
+ \code{\link{plot.bins}}.
 }

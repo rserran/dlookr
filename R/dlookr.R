@@ -86,17 +86,21 @@ if (getRversion() >= "2.15.1") {
         else if (grepl("^mingw", R.version$os)) {
           return(paste(Sys.getenv("SystemRoot"), "\\Fonts", sep = ""))
         }
+        else if (grepl("^SunOS", R.version$os)) {
+          paths <- c("/usr/share/fonts/", "/usr/X11/lib/X11/fonts/TrueType/", 
+                     "~/.fonts/")
+        }        
         else {
           #msg <- "Don't know where to look for truetype fonts."
           #packageStartupMessage(msg)
-          return(NULL)
+          return(character(0))
         }
       }
       
       font_path <- get_ttf_paths()
       font_files <- list.files(font_path, pattern = "\\.ttf$", full.names = TRUE, 
                                recursive = TRUE, ignore.case = TRUE) 
-      grep(pattern, font_files, ignore.case = TRUE, value = TRUE)
+      grep(pattern, font_files, value = TRUE)
     }
     
     if (nrow(font_tab) > 0) {
@@ -135,9 +139,20 @@ if (getRversion() >= "2.15.1") {
     }
   }
   
-  load_fonts()
-  flag <- import_arial_narrow()
+  sucess <- TRUE
+  result <- try(load_fonts())
   
-  if (flag)
-    load_fonts()
+  if (class(result) == "try-error") {
+    sucess <- FALSE
+  }
+  
+  flag <- try(import_arial_narrow())
+  
+  if (class(flag) == "try-error") {
+    sucess <- FALSE
+  } else {
+    if (flag) {
+      try(load_fonts())
+    }    
+  }
 }

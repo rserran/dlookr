@@ -40,21 +40,26 @@
 #' \item levels : levels of binned value.
 #' \item raw : raw data, numeric vector corresponding to x argument.
 #' }
-#' @seealso \code{\link{binning_by}}, \code{\link{print.bins}}, \code{\link{summary.bins}}.
+#' @seealso \code{\link{binning_by}}, \code{\link{print.bins}}, \code{\link{summary.bins}},
+#'  \code{\link{plot.bins}}.
 #' @export
 #' @examples
 #' # Generate data for the example
 #' carseats <- ISLR::Carseats
 #' carseats[sample(seq(NROW(carseats)), 20), "Income"] <- NA
 #' carseats[sample(seq(NROW(carseats)), 5), "Urban"] <- NA
+#' 
 #' # Binning the carat variable. default type argument is "quantile"
 #' bin <- binning(carseats$Income)
 #' # Print bins class object
 #' bin
+#' 
 #' # Summarise bins class object
 #' summary(bin)
+#' 
 #' # Plot bins class object
 #' plot(bin)
+#' 
 #' # Using labels argument
 #' bin <- binning(carseats$Income, nbins = 4,
 #'               labels = c("LQ1", "UQ1", "LQ3", "UQ3"))
@@ -62,12 +67,12 @@
 #' # Using another type argument
 #' bin <- binning(carseats$Income, nbins = 5, type = "equal")
 #' bin
-#' bin <- binning(carseats$Income, nbins = 5, type = "pretty")
-#' bin
-#' bin <- binning(carseats$Income, nbins = 5, type = "kmeans")
-#' bin
-#' bin <- binning(carseats$Income, nbins = 5, type = "bclust")
-#' bin
+#' # bin <- binning(carseats$Income, nbins = 5, type = "pretty")
+#' # bin
+#' # bin <- binning(carseats$Income, nbins = 5, type = "kmeans")
+#' # bin
+#' # bin <- binning(carseats$Income, nbins = 5, type = "bclust")
+#' # bin
 #' 
 #' x <- sample(1:1000, size = 50) * 12345679
 #' bin <- binning(x)
@@ -83,6 +88,7 @@
 #' # -------------------------
 #' library(dplyr)
 #'
+#' # Compare binned frequency by ShelveLoc
 #' carseats %>%
 #'  mutate(Income_bin = binning(carseats$Income) %>% 
 #'                      extract()) %>%
@@ -90,6 +96,14 @@
 #'  summarise(freq = n()) %>%
 #'  arrange(desc(freq)) %>%
 #'  head(10)
+#'  
+#'  # Compare binned frequency by ShelveLoc using Viz
+#'  carseats %>%
+#'    mutate(Income_bin = binning(carseats$Income) %>% 
+#'            extract()) %>%
+#'    target_by(ShelveLoc) %>% 
+#'    relate(Income_bin) %>% 
+#'    plot()
 #'  
 #' @importFrom grDevices nclass.Sturges
 #' @importFrom stats na.omit quantile
@@ -175,7 +189,9 @@ binning <- function(x, nbins,
       sapply(c) %>% 
       as.numeric() %>% 
       unique()
+    
     pretty.lab[1] <- min(x, na.rm = TRUE)
+    pretty.lab[length(pretty.lab)] <- max(x, na.rm = TRUE)
     
     if (approxy.lab) {
       if (!all(pretty.lab == breaks)) {
@@ -347,8 +363,12 @@ plot.bins <- function(x, typographic = TRUE, ...) {
   
   if (typographic) {
     p_bottom <- p_bottom +
-      theme_typographic() 
+      theme_typographic() +
+      theme(plot.margin = margin(5, 20, 10, 20))
   }
+  
+  p_bottom <- p_bottom +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
   
   suppressWarnings(gridExtra::grid.arrange(p_top, p_bottom, nrow = 2, ncol = 1)) 
 }
@@ -847,7 +867,10 @@ extract.bins <- function(x) {
   idx <- as.integer(object)
   levels <- attr(object,"levels")
   
-  factor(levels[idx], levels = levels)
+  raw <- factor(levels[idx], levels = levels)
+  class(raw) <- grep("bins", class(x), invert = TRUE, value = TRUE)
+  
+  raw
 }
 
 
