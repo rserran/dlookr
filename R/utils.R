@@ -63,10 +63,10 @@ get_class <- function(df) {
 #' find_class(iris, "categorical", index = FALSE)
 #'
 #' # tbl_df
-#' find_class(ISLR::Carseats, "numerical")
-#' find_class(ISLR::Carseats, "numerical", index = FALSE)
-#' find_class(ISLR::Carseats, "categorical")
-#' find_class(ISLR::Carseats, "categorical", index = FALSE)
+#' find_class(ggplot2::diamonds, "numerical")
+#' find_class(ggplot2::diamonds, "numerical", index = FALSE)
+#' find_class(ggplot2::diamonds, "categorical")
+#' find_class(ggplot2::diamonds, "categorical", index = FALSE)
 #'
 #' # type is "categorical2"
 #' iris2 <- data.frame(iris, char = "chars",
@@ -113,7 +113,7 @@ find_class <- function(df, type = c("numerical", "categorical", "categorical2"),
 #' @param rate logical. If TRUE, returns the percentage of missing values
 #' in the individual variable.
 #' @return Information on variables including missing values.
-#' @seealso \code{\link{imputate_na}}, \code{\link{find_na}}.
+#' @seealso \code{\link{imputate_na}}, \code{\link{find_outliers}}.
 #' @examples
 #' \dontrun{
 #' find_na(jobchange)
@@ -242,7 +242,7 @@ find_outliers <- function(.data, index = TRUE, rate = FALSE) {
 #' ## using dplyr -------------------------------------
 #' library(dplyr)
 #'
-#' # Perform simple data quality diagnosis of variables with outliers.
+#' # Perform simple data quality diagnosis of skewed variables
 #' heartfailure %>%
 #'   select(find_skewness(.)) %>%
 #'   diagnose()
