@@ -4,7 +4,7 @@ CHANGES IN R VERSION 0.4.5:
   
     * Add a new function diagnose_sparese() checks cases that do not occur in 
       observations for all possible combinations of levels of categorical 
-      variables. (#35, thanks HyoJin Song)
+      variables. (thanks HyoJin Song, #35)
     
   BUG FIXES:
 
@@ -18,6 +18,11 @@ CHANGES IN R VERSION 0.4.5:
       levels (may occur depending on data characteristics when the binning 
       type is "equal") in plot.bins().  
       
+    * Fixed a miss typo in plot_outlier(). (thanks @jmanacup, #41)
+
+    * Fixed an error in the describe() for data containing variables 
+      with 3 or fewer complete cases. (thanks @davidfgeorge, #42)
+    
   MINOR CHANGES:
     
     * Added datasets that are 'heartfailure' and 'jobchange'. 
