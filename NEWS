@@ -1,3 +1,28 @@
+CHANGES IN R VERSION 0.5.0:
+
+  NEW FEATURES:
+  
+    * Add a new function plot_hist_numeric() to plot histogram of numerical 
+      variables.
+    
+  BUG FIXES:
+
+    * 
+    
+  MINOR CHANGES:
+    
+    * Added the duplicated information in overview() and summary.overview().
+
+    * In the result of overview(), included ordered in factor in data type.    
+
+    * Change grade of missing value in plot_na_pareto().
+    
+    * Added the "date_categorical", "date_categorical2" for type argument 
+      that find Date and POSIXct classes in find_class().
+      
+    * Added the 'add_date' argument for Date, POSIXct class in diagnose_category() . 
+    
+    
 CHANGES IN R VERSION 0.4.5:
 
   NEW FEATURES:

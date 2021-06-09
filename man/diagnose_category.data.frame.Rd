@@ -12,7 +12,8 @@ diagnose_category(.data, ...)
   ...,
   top = 10,
   type = c("rank", "n")[2],
-  add_character = TRUE
+  add_character = TRUE,
+  add_date = TRUE
 )
 }
 \arguments{
@@ -39,6 +40,9 @@ If there are too many rows to be returned because there are too many ties,
 you can adjust the returned rows appropriately by using "n".}
 
 \item{add_character}{logical. Decide whether to include text variables in the
+diagnosis of categorical data. The default value is TRUE, which also includes character variables.}
+
+\item{add_date}{ogical. Decide whether to include Date and POSIXct variables in the
 diagnosis of categorical data. The default value is TRUE, which also includes character variables.}
 }
 \value{
@@ -76,10 +80,10 @@ See vignette("diagonosis") for an introduction to these concepts.
 diagnose_category(jobchange)
 
 # Select the variable to diagnose
-diagnose_category(jobchange, education_level, company_type)
-diagnose_category(jobchange, -education_level, -company_type)
-diagnose_category(jobchange, "education_level", "company_type")
-diagnose_category(jobchange, 7)
+# diagnose_category(jobchange, education_level, company_type)
+# diagnose_category(jobchange, -education_level, -company_type)
+# diagnose_category(jobchange, "education_level", "company_type")
+# diagnose_category(jobchange, 7)
 
 # Using pipes ---------------------------------
 library(dplyr)
@@ -91,15 +95,18 @@ jobchange \%>\%
 # Positive values select variables
 jobchange \%>\%
  diagnose_category(company_type, job_chnge)
+ 
 # Negative values to drop variables
 jobchange \%>\%
   diagnose_category(-company_type, -job_chnge)
+  
 # Positions values select variables
-jobchange \%>\%
-  diagnose_category(7)
+# jobchange \%>\%
+#   diagnose_category(7)
+  
 # Positions values select variables
-jobchange \%>\%
-  diagnose_category(-7)
+# jobchange \%>\%
+#   diagnose_category(-7)
   
 # Top rank levels with top argument
 jobchange \%>\%
