@@ -345,7 +345,7 @@ diagnose_category.tbl_dbi <- function(.data, ..., top = 10, type = c("rank", "n"
   } else {
     .data %>% 
       dplyr::collect(n = collect_size) %>% 
-      diagn_category_impl(vars, top, type, add_character = TRUE)
+      diagn_category_impl(vars, top, type, add_character = TRUE, add_date = TRUE)
   }
 }
 
@@ -1328,7 +1328,7 @@ describe.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size = Inf
         dplyr::collect(n = collect_size) %>%
         describe_impl(vars)
     } else {
-      group <- .data$ops$dots[[1]]
+      group <- .data$ops$dots
       
       .data %>% 
         group_by(group) %>% 
