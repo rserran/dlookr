@@ -1,6 +1,8 @@
 CHANGES IN R VERSION 0.5.2:
   BUG FIXES:
 
+    * Fixed an error in plot_hist_numeric() when variable names contain spaces. 
+      
     * Fixed an error that occurred in compare_numeric() when using 
       a tibble object as an argument. 
       
@@ -13,6 +15,27 @@ CHANGES IN R VERSION 0.5.2:
     * Fixed an error in calculating the location of outliers 
       in the outliers section in the diagnose_paged_report() 
       and diagnose_web_report().      
+
+  MAJOR CHANGES:
+    
+    * Added the ability to specify the font family in the visualization function. 
+      This feature is useful for visualization by users using non-ASCII characters.
+      - plot_outlier.data.frame(), plot_outlier.target_df(), plot_outlier.tbl_dbi()
+      - plot_hist_numeric.data.frame(), plot_hist_numeric.grouped_df(),
+      - plot_na_intersect(), plot_na_pareto(), plot_na_hclust()
+      - plot.compare_category(), plot.compare_numeric()
+      - plot.overview(), plot.relate()
+      - plot.univar_category(), plot.univar_numeric()
+      - plot_bar_category.data.frame(), plot_bar_category.grouped_df()
+      - plot_qq_numeric.data.frame(), plot_qq_numeric.grouped_df()
+      - plot_box_numeric.data.frame(), plot_box_numeric.grouped_df()
+      - plot_hist_numeric.data.frame(), plot_hist_numeric.grouped_df()
+      - plot_correlate.data.frame(), plot_correlate.grouped_df(),
+        plot_correlate.tbl_dbi() 
+      
+    * Added the ability to specify the font family in the reporting function. 
+      This feature is useful for visualization by users using non-ASCII characters.
+      - diagnose_web_report(), diagnose_paged_report()
       
   MINOR CHANGES:
     

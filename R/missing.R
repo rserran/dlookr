@@ -14,6 +14,8 @@
 #' @param col.right character. The color of right legend that is percentage of NA. default is "#56B4E9".
 #' @param typographic logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
 #' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package.
+#' @param base_family character. The name of the base font family to use 
+#' for the visualization. If not specified, the font defined in dlookr is applied. 
 #' @examples
 #' # Generate data for the example
 #' set.seed(123L)
@@ -33,7 +35,9 @@
 #' @import hrbrthemes
 #' @export
 #' 
-plot_na_hclust <- function (x, main = NULL, col.left = "#009E73", col.right = "#56B4E9", typographic = TRUE)
+plot_na_hclust <- function (x, main = NULL, col.left = "#009E73", 
+                            col.right = "#56B4E9", typographic = TRUE,
+                            base_family = NULL)
 {
   N <- nrow(x)
   
@@ -100,6 +104,7 @@ plot_na_hclust <- function (x, main = NULL, col.left = "#009E73", col.right = "#
                fontface = "bold") +
     labs(y = "Variables with missing values", 
          x = "Number of observations", title = main) +
+    theme_grey(base_family = base_family) +    
     theme(axis.text.x = element_text(size = 9, angle = 0, vjust = 0.3),
           axis.text.y = element_text(size = 10),
           plot.title = element_text(size = 11),
@@ -107,7 +112,7 @@ plot_na_hclust <- function (x, main = NULL, col.left = "#009E73", col.right = "#
   
   if (typographic) {
     p <- p +
-      theme_typographic() +
+      theme_typographic(base_family) +
       theme(legend.position = "none",
             axis.title.x = element_text(size = 12),
             axis.title.y = element_text(size = 12))
@@ -135,6 +140,8 @@ plot_na_hclust <- function (x, main = NULL, col.left = "#009E73", col.right = "#
 #' @param plot logical. If this value is TRUE then visualize plot. else if FALSE, return aggregate information about missing values.
 #' @param typographic logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
 #' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package.
+#' @param base_family character. The name of the base font family to use 
+#' for the visualization. If not specified, the font defined in dlookr is applied. 
 #' @examples
 #' # Generate data for the example
 #' set.seed(123L)
@@ -179,7 +186,7 @@ plot_na_hclust <- function (x, main = NULL, col.left = "#009E73", col.right = "#
 #' @export
 plot_na_pareto <- function (x, only_na = FALSE, relative = FALSE, main = NULL, col = "black",
                             grade = list(Good = 0.05, OK = 0.1, NotBad = 0.2, Bad = 0.5, Remove = 1),
-                            plot = TRUE, typographic = TRUE)
+                            plot = TRUE, typographic = TRUE, base_family = NULL)
 {
   if (sum(is.na(x)) == 0) {
     stop("Data have no missing value.")
@@ -253,6 +260,7 @@ plot_na_pareto <- function (x, only_na = FALSE, relative = FALSE, main = NULL, c
                colour = col, size = 1.5) +
     scale_y_continuous(sec.axis = sec_axis(~.*scaleRight, name = "Cumulative (%)")) +
     labs(title = main, x = xlab, y = ylab) + 
+    theme_grey(base_family = base_family) +    
     theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
           legend.position = "top") +
     scale_fill_manual(values = pals, 
@@ -262,7 +270,7 @@ plot_na_pareto <- function (x, only_na = FALSE, relative = FALSE, main = NULL, c
   
   if (typographic) {
     p <- p +
-      theme_typographic() +
+      theme_typographic(base_family) +
       theme(legend.position = "top",
             axis.title.x = element_text(size = 12),
             axis.title.y = element_text(size = 12),
@@ -300,6 +308,8 @@ plot_na_pareto <- function (x, only_na = FALSE, relative = FALSE, main = NULL, c
 #' @param main character. Main title.
 #' @param typographic logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
 #' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package.
+#' @param base_family character. The name of the base font family to use 
+#' for the visualization. If not specified, the font defined in dlookr is applied. 
 #' @examples
 #' # Generate data for the example
 #' set.seed(123L)
@@ -339,7 +349,8 @@ plot_na_pareto <- function (x, only_na = FALSE, relative = FALSE, main = NULL, c
 #' @import dplyr
 #' @export
 plot_na_intersect <- function (x, only_na = TRUE, n_intersacts = NULL, 
-                               n_vars = NULL, main = NULL, typographic = TRUE)
+                               n_vars = NULL, main = NULL, typographic = TRUE,
+                               base_family = NULL)
 {
   N <- nrow(x)
   
@@ -471,7 +482,7 @@ plot_na_intersect <- function (x, only_na = TRUE, n_intersacts = NULL,
   
   if (typographic) {
     top <- top +
-      theme_typographic() +
+      theme_typographic(base_family) +
       scale_x_continuous(breaks = seq(marginal_var$Var1), 
                          labels = marginal_var$n_var,
                          limits = c(0, length(na_variable)) + 0.5) +
@@ -482,15 +493,16 @@ plot_na_intersect <- function (x, only_na = TRUE, n_intersacts = NULL,
             plot.margin = margin(10, 10, 0, 10))
     
     body <- body +
-      theme_typographic() +
+      theme_typographic(base_family) +
       theme(legend.position = "none",
             axis.title.x = element_text(size = 12),
             axis.title.y = element_blank(),
             axis.text.y = element_blank(),
+            axis.text.x = element_text(angle = 45, hjust = 1),
             plot.margin = margin(0, 10, 30, 10))
       
     right <- right +
-      theme_typographic() +
+      theme_typographic(base_family) +
       scale_x_continuous(breaks = seq(marginal_obs$Var2), 
                          labels = marginal_obs$n_obs,
                          limits = c(0, nrow(marginal_obs)) + 0.5) +    
@@ -502,14 +514,17 @@ plot_na_intersect <- function (x, only_na = TRUE, n_intersacts = NULL,
             axis.text.x = element_text(color = "transparent"),
             plot.margin = margin(0, 10, 30, 0))
     
-    fontfamily <- get_font_family()
+    if (is.null(base_family)) {
+      base_family <- get_font_family()
+    }
     
-    main <- grid::textGrob(main, gp = grid::gpar(fontfamily = fontfamily, 
+    main <- grid::textGrob(main, gp = grid::gpar(fontfamily = base_family, 
                                                  fontsize = 18, font = 2),
                           x = unit(0.075, "npc"), just = "left")
     
   } else {
     body <- body +
+      theme_grey(base_family = base_family) +
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1,
                                        family = "mono"),
             axis.title.y = element_blank(), axis.text.y = element_blank(),
@@ -521,6 +536,7 @@ plot_na_intersect <- function (x, only_na = TRUE, n_intersacts = NULL,
       scale_x_continuous(breaks = seq(marginal_var$Var1), 
                          labels = marginal_var$n_var,
                          limits = c(0, length(na_variable)) + 0.5) +
+      theme_grey(base_family = base_family) +
       theme(axis.ticks.x = element_blank(), axis.title.x = element_blank(),
             axis.title.y = element_blank(), axis.text.y = element_blank(),
             axis.ticks.y = element_blank())
@@ -531,7 +547,8 @@ plot_na_intersect <- function (x, only_na = TRUE, n_intersacts = NULL,
                          limits = c(0, nrow(marginal_obs)) + 0.5) +    
       scale_y_continuous(breaks = breaks, 
                          labels = breaks_label,
-                         limits = range(c(0, breaks))) +    
+                         limits = range(c(0, breaks))) +
+      theme_grey(base_family = base_family) +
       theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, 
                                        family = "mono", color = "transparent"),
             axis.ticks.x = element_blank(),
