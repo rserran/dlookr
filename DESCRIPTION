@@ -1,8 +1,8 @@
 Package: dlookr
 Type: Package
 Title: Tools for Data Diagnosis, Exploration, Transformation
-Version: 0.5.4.9000
-Date: 2021-11-30
+Version: 0.5.5.9000
+Date: 2021-12-07
 Authors@R: c(
   person("Choonghyun", "Ryu",, "choonghyun.ryu@gmail.com", role = c("aut", "cre"))
   )
@@ -56,7 +56,8 @@ Suggests:
     rpart,
     prettydoc,    
     RSQLite,
-    ranger
+    ranger,
+    stringi
 Author: Choonghyun Ryu [aut, cre]
 Maintainer: Choonghyun Ryu <choonghyun.ryu@gmail.com>    
 BugReports: https://github.com/choonghyunryu/dlookr/issues
