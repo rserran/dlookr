@@ -1,11 +1,18 @@
-CHANGES IN R VERSION 0.6.1.9000:
+CHANGES IN R VERSION 0.6.1.9001:
   BUG FIXES:
     * Fixed EDA report failing when target variable is number or integer 
       in eda_web_report() and eda_paged_report(). (thanks to neural-oracle, #75) 
       
     * Added exception handling logic for errors that occur when the bandwidth 
       estimate of a numeric variable is 0 in plot.relate(). (#76)       
-      
+
+  MINOR CHANGES:
+    * Added new arguments to functions that generate pdf reports for use 
+      in shinyapps.io (#77)     
+        - diagnose_paged_report()
+        - eda_paged_report()
+        - transformation_paged_report()
+        
 
       
 CHANGES IN R VERSION 0.6.0:
