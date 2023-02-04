@@ -1,3 +1,21 @@
+# dlookr 0.6.2.9001
+
+## MAJOR CHANGES
+
+* Add group_by() support functions. (thanks to Jüri Kuusik, #90)
+   - diagnose()
+   - diagnose_category()
+   - diagnose_numeric()
+   - diagnose_outlier()
+  
+* Add group_by() support functions for DBMS. (#93)
+   - diagnose.tbl_dbi()
+   - diagnose_category.tbl_dbi()
+   - diagnose_numeric.tbl_dbi()
+   - diagnose_outlier.tbl_dbi()
+
+
+
 # dlookr 0.6.1
 
 ## BUG FIXES
