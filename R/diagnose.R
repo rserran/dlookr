@@ -1168,6 +1168,8 @@ plot_outlier_raw <- function(x, main = NULL, col = "steelblue",
 #' 
 #' # death_eventing DBMS tables ----------------------------------
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
@@ -1393,6 +1395,8 @@ diagnose_report <- function(.data, output_format, output_file, output_dir, ...) 
 #' @examples
 #' \donttest{
 #' if (FALSE) {
+#' if (!require(prettydoc)) install.packages('prettydoc', repos = "http://cran.us.r-project.org")
+#' 
 #' # reporting the diagnosis information -------------------------
 #' # create pdf file. file name is DataDiagnosis_Report.pdf
 #' diagnose_report(heartfailure)
@@ -1491,8 +1495,9 @@ diagnose_report.data.frame <- function(.data, output_format = c("pdf", "html"),
     file.copy(from = Rmd_file, to = path, recursive = TRUE)
     
     if (!requireNamespace("forecast", quietly = TRUE)) {
-      stop("Package \"forecast\" needed for this function to work. Please install it.",
+      warning("Package \"forecast\" needed for this function to work. Please install it.",
            call. = FALSE)
+      return(NULL)
     }
     
     rmarkdown::render(paste(path, rmd, sep = "/"),

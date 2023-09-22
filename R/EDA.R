@@ -75,6 +75,8 @@ eda_report <- function(.data, ...) {
 #' if (FALSE) {
 #' library(dplyr)
 #' 
+#' if (!require(prettydoc)) install.packages('prettydoc', repos = "http://cran.us.r-project.org")
+#' 
 #' ## target variable is categorical variable ----------------------------------
 #' # reporting the EDA information
 #' # create pdf file. file name is EDA_Report.pdf
@@ -210,8 +212,9 @@ eda_report.data.frame <- function(.data, target = NULL, output_format = c("pdf",
     file.copy(from = Rmd_file, to = path, recursive = TRUE)
     
     if (!requireNamespace("prettydoc", quietly = TRUE)) {
-      stop("Package \"prettydoc\" needed for this function to work. Please install it.",
+      warning("Package \"prettydoc\" needed for this function to work. Please install it.",
            call. = FALSE)
+      return(NULL)
     }
     
     rmarkdown::render(paste(path, rmd, sep = "/"),

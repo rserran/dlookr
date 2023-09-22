@@ -1,9 +1,12 @@
-# dlookr 0.6.3.9003
+# dlookr 0.6.3
 
 ## MINOR CHANGES
 
 * Remove the funModeling package dependency of the binning_rgr() function. 
   (thanks to Pablo Casas, #96)
+
+* Error occurred in binning() during CRAN test. (#104) 
+  
 
 ## BUG FIXES
 
@@ -11,11 +14,11 @@
   (thanks to Jessica N Busler, #98) 
   
 * Fixed an error that occurred when there was a non-character data type (such as a date) among categorical variables in diagnose_category(). 
-  (thanks to @hope-data-science, #100)   
+  (thanks to @hope-data-science, #100, @marcozanotti, #102)   
   
   
 
-# dlookr 0.6.2.9001
+# dlookr 0.6.2
 
 ## MAJOR CHANGES
 

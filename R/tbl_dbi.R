@@ -37,6 +37,8 @@
 #' \donttest{
 #' library(dplyr)
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
@@ -55,8 +57,9 @@ get_column_info <- function(df) {
     res <- DBI::dbSendQuery(df$src$con,
                             dbplyr::remote_query(df))
   } else {
-    stop("Package 'DBI' needed for this function to work. Please install it.", 
+    warning("Package 'DBI' needed for this function to work. Please install it.", 
          call. = FALSE)
+    return(NULL)
   }
   
   column_info <- DBI::dbColumnInfo(res)
@@ -118,6 +121,8 @@ get_column_info <- function(df) {
 #' library(dplyr)
 #'
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy jobchange to the DBMS with a table named TB_JOBCHANGE
@@ -321,6 +326,8 @@ diagn_group_impl_dbi <- function(df, vars) {
 #' library(dplyr)
 #' 
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy jobchange to the DBMS with a table named TB_JOBCHANGE
@@ -581,6 +588,8 @@ diagn_category_group_impl_dbi <- function(df, vars, top, type) {
 #' library(dplyr)
 #' 
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
@@ -697,6 +706,8 @@ diagnose_numeric.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_si
 #' library(dplyr)
 #' 
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
@@ -817,6 +828,8 @@ diagnose_outlier.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_si
 #' library(dplyr)
 #' 
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
@@ -930,6 +943,8 @@ plot_outlier.tbl_dbi <- function(.data, ..., col = "steelblue",
 #' library(dplyr)
 #' 
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
@@ -1080,6 +1095,8 @@ normality.tbl_dbi <- function(.data, ..., sample = 5000,
 #' library(dplyr)
 #' 
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
@@ -1172,6 +1189,8 @@ plot_normality.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size
 #' library(dplyr)
 #' 
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
@@ -1367,6 +1386,8 @@ plot_correlate.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size
 #' library(dplyr)
 #' 
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
@@ -1486,6 +1507,8 @@ describe.tbl_dbi <- function(.data, ..., statistics = NULL, quantiles = NULL,
 #' library(dplyr)
 #'
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
@@ -1619,6 +1642,8 @@ target_by.tbl_dbi <- function(.data, target, in_database = FALSE, collect_size =
 #' heartfailure2[sample(seq(NROW(heartfailure2)), 5), "smoking"] <- NA
 #'
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure2 to the DBMS with a table named TB_HEARTFAILURE
@@ -1746,6 +1771,8 @@ diagnose_report.tbl_dbi <- function(.data, output_format = c("pdf", "html"),
 #' heartfailure2[sample(seq(NROW(heartfailure2)), 5), "smoking"] <- NA
 #'
 #' # connect DBMS
+#' if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
+#' if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
 #' con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 #' 
 #' # copy heartfailure2 to the DBMS with a table named TB_HEARTFAILURE
