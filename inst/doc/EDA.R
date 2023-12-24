@@ -7,12 +7,10 @@ library(dplyr)
 library(ggplot2)
 
 ## ----import_data, warning=FALSE-----------------------------------------------
-if (!require("ISLR")) install.packages("ISLR", repos = "http://cran.us.r-project.org")
-
-str(ISLR::Carseats)
+str(Carseats)
 
 ## ----missing------------------------------------------------------------------
-carseats <- ISLR::Carseats
+carseats <- Carseats
 
 suppressWarnings(RNGversion("3.5.0"))
 set.seed(123)
@@ -84,11 +82,11 @@ carseats %>%
   normality(log_income) %>%
   filter(p_value > 0.01)
 
-## ----plot_normality, fig.align='center', fig.width = 7, fig.height = 5--------
+## ----plot_normality, fig.align='center', fig.width = 6, fig.height = 4--------
 # Select columns by name
 plot_normality(carseats, Sales, CompPrice)
 
-## ----plot_normality2, fig.align='center', fig.width = 7, fig.height = 5, eval=FALSE----
+## ----plot_normality2, fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE----
 #  carseats %>%
 #    filter(ShelveLoc == "Good") %>%
 #    group_by(US) %>%
@@ -121,7 +119,7 @@ tab_corr <- carseats %>%
 
 tab_corr
 
-## ----plot_correlate, fig.align='center', fig.width = 7, fig.height = 5--------
+## ----plot_correlate, fig.align='center', fig.width = 6, fig.height = 4--------
 carseats %>% 
   correlate() %>% 
   plot()
@@ -147,7 +145,7 @@ cat_num <- relate(categ, Sales)
 cat_num
 summary(cat_num)
 
-## ----target_by3, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE----
+## ----target_by3, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
 plot(cat_num)
 
 ## ----target_by4---------------------------------------------------------------
@@ -156,7 +154,7 @@ cat_cat <- relate(categ, ShelveLoc)
 cat_cat
 summary(cat_cat)
 
-## ----target_by5, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE----
+## ----target_by5, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
 plot(cat_cat)
 
 ## ----target_by6---------------------------------------------------------------
@@ -169,10 +167,10 @@ num_num <- relate(num, Price)
 num_num
 summary(num_num)
 
-## ----target_by8, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE----
+## ----target_by8, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
 plot(num_num)
 
-## ----target_by8_2, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE----
+## ----target_by8_2, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
 plot(num_num, hex_thres = 350)
 
 ## ----target_by9---------------------------------------------------------------
@@ -181,7 +179,7 @@ num_cat <- relate(num, ShelveLoc)
 num_cat
 summary(num_cat)
 
-## ----target_by10, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE----
+## ----target_by10, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE----
 plot(num_cat)
 
 ## ----eda_web_report, eval=FALSE-----------------------------------------------
@@ -203,82 +201,77 @@ knitr::include_graphics('img/eda_paged_cover.jpg')
 ## ----eda_paged_cntent, echo=FALSE, out.width='80%', fig.align='center', fig.pos="!h", fig.cap="The dynamic contents of the report"----
 knitr::include_graphics('img/eda_paged_content.jpg')
 
-## ----dbi_table, warning=FALSE, message=FALSE----------------------------------
-if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
-if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
-if (!require(dplyr)) install.packages('dplyr', repos = "http://cran.us.r-project.org")
-if (!require(dbplyr)) install.packages('dbplyr', repos = "http://cran.us.r-project.org")
+## ----dbi_table, warning=FALSE, message=FALSE, eval=FALSE----------------------
+#  library(dplyr)
+#  
+#  carseats <- Carseats
+#  carseats[sample(seq(NROW(carseats)), 20), "Income"] <- NA
+#  carseats[sample(seq(NROW(carseats)), 5), "Urban"] <- NA
+#  
+#  # connect DBMS
+#  con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+#  
+#  # copy carseats to the DBMS with a table named TB_CARSEATS
+#  copy_to(con_sqlite, carseats, name = "TB_CARSEATS", overwrite = TRUE)
 
-library(dplyr)
+## ----dbi_describe, eval=FALSE-------------------------------------------------
+#  # Positive values select variables
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    describe(Sales, CompPrice, Income)
+#  
+#  # Negative values to drop variables, and In-memory mode and collect size is 200
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    describe(-Sales, -CompPrice, -Income, collect_size = 200)
+#  
+#  # Find the statistic of all numerical variables by 'ShelveLoc' and 'US',
+#  # and extract only those with 'ShelveLoc' variable level is "Good".
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    group_by(ShelveLoc, US) %>%
+#    describe() %>%
+#    filter(ShelveLoc == "Good")
+#  
+#  # extract only those with 'Urban' variable level is "Yes",
+#  # and find 'Sales' statistics by 'ShelveLoc' and 'US'
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    filter(Urban == "Yes") %>%
+#    group_by(ShelveLoc, US) %>%
+#    describe(Sales)
 
-carseats <- ISLR::Carseats
-carseats[sample(seq(NROW(carseats)), 20), "Income"] <- NA
-carseats[sample(seq(NROW(carseats)), 5), "Urban"] <- NA
+## ----dbi_normality, eval=FALSE------------------------------------------------
+#  # Test all numerical variables by 'ShelveLoc' and 'US',
+#  # and extract only those with 'ShelveLoc' variable level is "Good".
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#   group_by(ShelveLoc, US) %>%
+#   normality() %>%
+#   filter(ShelveLoc == "Good")
+#  
+#  # extract only those with 'Urban' variable level is "Yes",
+#  # and test 'Sales' by 'ShelveLoc' and 'US'
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#   filter(Urban == "Yes") %>%
+#   group_by(ShelveLoc, US) %>%
+#   normality(Sales)
+#  
+#  # Test log(Income) variables by 'ShelveLoc' and 'US',
+#  # and extract only p.value greater than 0.01.
+#  
+#  # SQLite extension functions for log transformation
+#  RSQLite::initExtension(con_sqlite)
+#  
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#   mutate(log_income = log(Income)) %>%
+#   group_by(ShelveLoc, US) %>%
+#   normality(log_income) %>%
+#   filter(p_value > 0.01)
 
-# connect DBMS
-con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-
-# copy carseats to the DBMS with a table named TB_CARSEATS
-copy_to(con_sqlite, carseats, name = "TB_CARSEATS", overwrite = TRUE)
-
-## ----dbi_describe-------------------------------------------------------------
-# Positive values select variables
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  describe(Sales, CompPrice, Income)
-
-# Negative values to drop variables, and In-memory mode and collect size is 200
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  describe(-Sales, -CompPrice, -Income, collect_size = 200)
-
-# Find the statistic of all numerical variables by 'ShelveLoc' and 'US',
-# and extract only those with 'ShelveLoc' variable level is "Good".
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  group_by(ShelveLoc, US) %>%
-  describe() %>%
-  filter(ShelveLoc == "Good")
-
-# extract only those with 'Urban' variable level is "Yes",
-# and find 'Sales' statistics by 'ShelveLoc' and 'US'
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  filter(Urban == "Yes") %>%
-  group_by(ShelveLoc, US) %>%
-  describe(Sales)
-
-## ----dbi_normality------------------------------------------------------------
-# Test all numerical variables by 'ShelveLoc' and 'US',
-# and extract only those with 'ShelveLoc' variable level is "Good".
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
- group_by(ShelveLoc, US) %>%
- normality() %>%
- filter(ShelveLoc == "Good")
-
-# extract only those with 'Urban' variable level is "Yes",
-# and test 'Sales' by 'ShelveLoc' and 'US'
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
- filter(Urban == "Yes") %>%
- group_by(ShelveLoc, US) %>%
- normality(Sales)
-
-# Test log(Income) variables by 'ShelveLoc' and 'US',
-# and extract only p.value greater than 0.01.
-
-# SQLite extension functions for log transformation
-RSQLite::initExtension(con_sqlite)
-
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
- mutate(log_income = log(Income)) %>%
- group_by(ShelveLoc, US) %>%
- normality(log_income) %>%
- filter(p_value > 0.01)
-
-## ----plot_normality_dbi, fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE----
+## ----plot_normality_dbi, fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE, eval=FALSE----
 #  # extract only those with 'ShelveLoc' variable level is "Good",
 #  # and plot 'Income' by 'US'
 #  # the result is same as a data.frame, but not display here. reference above in document.
@@ -288,39 +281,39 @@ con_sqlite %>%
 #    group_by(US) %>%
 #    plot_normality(Income)
 
-## ----dbi_correlation----------------------------------------------------------
-# Correlation coefficient
-# that eliminates redundant combination of variables
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  correlate() %>%
-  filter(as.integer(var1) > as.integer(var2))
-
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  correlate(Sales, Price) %>%
-  filter(as.integer(var1) > as.integer(var2))
-
-# Compute the correlation coefficient of Sales variable by 'ShelveLoc'
-# and 'US' variables. And extract only those with absolute
-# value of correlation coefficient is greater than 0.5
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  group_by(ShelveLoc, US) %>%
-  correlate(Sales) %>%
-  filter(abs(coef_corr) >= 0.5)
-
-# extract only those with 'ShelveLoc' variable level is "Good",
-# and compute the correlation coefficient of 'Sales' variable
-# by 'Urban' and 'US' variables.
-# And the correlation coefficient is negative and smaller than 0.5
-con_sqlite %>% 
-  tbl("TB_CARSEATS") %>% 
-  filter(ShelveLoc == "Good") %>%
-  group_by(Urban, US) %>%
-  correlate(Sales) %>%
-  filter(coef_corr < 0) %>%
-  filter(abs(coef_corr) > 0.5)
+## ----dbi_correlation, eval=FALSE----------------------------------------------
+#  # Correlation coefficient
+#  # that eliminates redundant combination of variables
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    correlate() %>%
+#    filter(as.integer(var1) > as.integer(var2))
+#  
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    correlate(Sales, Price) %>%
+#    filter(as.integer(var1) > as.integer(var2))
+#  
+#  # Compute the correlation coefficient of Sales variable by 'ShelveLoc'
+#  # and 'US' variables. And extract only those with absolute
+#  # value of correlation coefficient is greater than 0.5
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    group_by(ShelveLoc, US) %>%
+#    correlate(Sales) %>%
+#    filter(abs(coef_corr) >= 0.5)
+#  
+#  # extract only those with 'ShelveLoc' variable level is "Good",
+#  # and compute the correlation coefficient of 'Sales' variable
+#  # by 'Urban' and 'US' variables.
+#  # And the correlation coefficient is negative and smaller than 0.5
+#  con_sqlite %>%
+#    tbl("TB_CARSEATS") %>%
+#    filter(ShelveLoc == "Good") %>%
+#    group_by(Urban, US) %>%
+#    correlate(Sales) %>%
+#    filter(coef_corr < 0) %>%
+#    filter(abs(coef_corr) > 0.5)
 
 ## ----plot_correlation_dbi, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE, eval=FALSE----
 #  # Extract only those with 'ShelveLoc' variable level is "Good",
@@ -334,14 +327,14 @@ con_sqlite %>%
 #    correlate() %>%
 #    plot(Sales)
 
-## ----dbi_ctarget_by-----------------------------------------------------------
-# If the target variable is a categorical variable
-categ <- target_by(con_sqlite %>% tbl("TB_CARSEATS") , US)
-
-# If the variable of interest is a numerical variable
-cat_num <- relate(categ, Sales)
-cat_num
-summary(cat_num)
+## ----dbi_ctarget_by, eval=FALSE-----------------------------------------------
+#  # If the target variable is a categorical variable
+#  categ <- target_by(con_sqlite %>% tbl("TB_CARSEATS") , US)
+#  
+#  # If the variable of interest is a numerical variable
+#  cat_num <- relate(categ, Sales)
+#  cat_num
+#  summary(cat_num)
 
 ## ----plot_target_by_dbi, fig.align='center', fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE----
 #  # the result is same as a data.frame, but not display here. reference above in document.

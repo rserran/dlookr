@@ -7,12 +7,10 @@ library(dplyr)
 library(ggplot2)
 
 ## ----import_data--------------------------------------------------------------
-if (!require("ISLR")) install.packages("ISLR", repos = "http://cran.us.r-project.org")
-
-str(ISLR::Carseats)
+str(Carseats)
 
 ## ----missing------------------------------------------------------------------
-carseats <- ISLR::Carseats
+carseats <- Carseats
 
 suppressWarnings(RNGversion("3.5.0"))
 set.seed(123)
@@ -22,9 +20,7 @@ suppressWarnings(RNGversion("3.5.0"))
 set.seed(456)
 carseats[sample(seq(NROW(carseats)), 10), "Urban"] <- NA
 
-## ----imputate_na, fig.align='center', fig.width = 7, fig.height = 5-----------
-# if (!require("rpart")) install.packages("rpart", repos = "http://cran.us.r-project.org")
-
+## ----imputate_na, fig.align='center', fig.width = 6, fig.height = 4-----------
 if (requireNamespace("rpart", quietly = TRUE)) {
   income <- imputate_na(carseats, Income, US, method = "rpart")
 
@@ -40,19 +36,19 @@ if (requireNamespace("rpart", quietly = TRUE)) {
   cat("If you want to use this feature, you need to install the rpart package.\n")
 }
 
-## ----imputate_na2, fig.align='center', fig.width = 7, fig.height = 5----------
-library(mice)
-
-urban <- imputate_na(carseats, Urban, US, method = "mice")
-
-# result of imputation
-urban
-
-# summary of imputation
-summary(urban)
-
-# viz of imputation
-plot(urban)
+## ----imputate_na2, fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE----
+#  library(mice)
+#  
+#  urban <- imputate_na(carseats, Urban, US, method = "mice")
+#  
+#  # result of imputation
+#  urban
+#  
+#  # summary of imputation
+#  summary(urban)
+#  
+#  # viz of imputation
+#  plot(urban)
 
 ## ----imputate_na3-------------------------------------------------------------
 # The mean before and after the imputation of the Income variable
@@ -62,7 +58,7 @@ carseats %>%
   summarise(orig = mean(Income, na.rm = TRUE),
             imputation = mean(Income_imp))
 
-## ----imputate_outlier, fig.align='center', fig.width = 7, fig.height = 5------
+## ----imputate_outlier, fig.align='center', fig.width = 6, fig.height = 4------
 price <- imputate_outlier(carseats, Price, method = "capping")
 
 # result of imputation
@@ -82,7 +78,7 @@ carseats %>%
   summarise(orig = mean(Price, na.rm = TRUE),
     imputation = mean(Price_imp, na.rm = TRUE))
 
-## ----standardization, fig.align='center', fig.width = 7, fig.height = 5-------
+## ----standardization, fig.align='center', fig.width = 6, fig.height = 4-------
 carseats %>% 
   mutate(Income_minmax = transform(carseats$Income, method = "minmax"),
     Sales_minmax = transform(carseats$Sales, method = "minmax")) %>% 
@@ -102,7 +98,7 @@ find_skewness(carseats, value = TRUE)
 # compute the skewness & filtering with threshold
 find_skewness(carseats, value = TRUE, thres = 0.1)
 
-## ----resolving2, fig.align='center', fig.width = 7, fig.height = 5------------
+## ----resolving2, fig.align='center', fig.width = 6, fig.height = 4------------
 Advertising_log <- transform(carseats$Advertising, method = "log")
 
 # result of transformation
@@ -112,7 +108,7 @@ summary(Advertising_log)
 # viz of transformation
 plot(Advertising_log)
 
-## ----resolving3, fig.align='center', fig.width = 7, fig.height = 5------------
+## ----resolving3, fig.align='center', fig.width = 6, fig.height = 4------------
 Advertising_log <- transform(carseats$Advertising, method = "log+1")
 
 # result of transformation
@@ -122,7 +118,7 @@ summary(Advertising_log)
 # viz of transformation
 # plot(Advertising_log)
 
-## ----binning, fig.width = 7, fig.height = 5-----------------------------------
+## ----binning, fig.width = 6, fig.height = 4-----------------------------------
 # Binning the carat variable. default type argument is "quantile"
 bin <- binning(carseats$Income)
 # Print bins class object
@@ -162,10 +158,8 @@ carseats %>%
  arrange(desc(freq)) %>%
  head(10)
 
-## ----binning_by, fig.width = 7, fig.height = 5--------------------------------
-if (!require("partykit")) install.packages("partykit", repos = "http://cran.us.r-project.org")
+## ----binning_by, fig.width = 6, fig.height = 4--------------------------------
 library(dplyr)
-library(partykit)
 
 # optimal binning using character
 bin <- binning_by(carseats, "US", "Advertising")

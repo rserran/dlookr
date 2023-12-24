@@ -1,4 +1,8 @@
-# dlookr 0.6.3
+# dlookr 0.6.3.9002
+
+## NEW FEATURES
+  
+* New data medicost and Carseats. (#107)
 
 ## MINOR CHANGES
 
@@ -13,6 +17,9 @@
         - and if not, it prints a warning message and exits.  
 
 ## BUG FIXES
+
+* Fixed misstyop in html_missing(), html_paged_missing(), html_missing(), and some functions.
+  (thanks to @jcochanc, #103)
 
 * Fixed a wrong of degree of freedom in eda_web_report(), eda_paged_report(). 
   (thanks to Jessica N Busler, #98) 

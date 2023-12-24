@@ -50,9 +50,7 @@ To illustrate the basic use of EDA in the dlookr package, I use a `Carseats` dat
 `Carseats` in the `ISLR` package is a simulated data set containing sales of child car seats at 400 different stores. This data is a data.frame created for the purpose of predicting sales volume.
 
 ```{r import_data, warning=FALSE}
-if (!require("ISLR")) install.packages("ISLR", repos = "http://cran.us.r-project.org")
-
-str(ISLR::Carseats)
+str(Carseats)
 ```
 
 The contents of individual variables are as follows. (Refer to ISLR::Carseats Man page)
@@ -83,7 +81,7 @@ The contents of individual variables are as follows. (Refer to ISLR::Carseats Ma
 When data analysis is performed, data containing missing values is frequently encountered. However, 'Carseats' is complete data without missing values. So the following script created the missing values and saved them as `carseats`.
 
 ```{r missing}
-carseats <- ISLR::Carseats
+carseats <- Carseats
 
 suppressWarnings(RNGversion("3.5.0"))
 set.seed(123)
@@ -249,14 +247,14 @@ In the data analysis process, it often encounters numerical data that follows th
 
 `plot_normality()` can also specify several variables like `normality()` function.
 
-```{r plot_normality, fig.align='center', fig.width = 7, fig.height = 5}
+```{r plot_normality, fig.align='center', fig.width = 6, fig.height = 4}
 # Select columns by name
 plot_normality(carseats, Sales, CompPrice)
 ```
 
 The `plot_normality()` function also supports the `group_by()` function syntax in the `dplyr` package.
 
-```{r plot_normality2, fig.align='center', fig.width = 7, fig.height = 5, eval=FALSE}
+```{r plot_normality2, fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE}
 carseats %>%
   filter(ShelveLoc == "Good") %>%
   group_by(US) %>%
@@ -311,7 +309,7 @@ tab_corr
 ### Visualization of the correlation matrix using `plot.correlate()`
 `plot.correlate()` visualizes the correlation matrix with correlate class.
 
-```{r plot_correlate, fig.align='center', fig.width = 7, fig.height = 5}
+```{r plot_correlate, fig.align='center', fig.width = 6, fig.height = 4}
 carseats %>% 
   correlate() %>% 
   plot()
@@ -364,7 +362,7 @@ summary(cat_num)
 
 `plot()` visualizes the `relate` class object created by `relate()` as the relationship between the target variable and the predictor variable. The relationship between `US` and `Sales` is visualized by density plot.
 
-```{r target_by3, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE}
+```{r target_by3, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE}
 plot(cat_num)
 ```
 
@@ -381,7 +379,7 @@ summary(cat_cat)
 
 `plot()` visualizes the relationship between the target variable and the predictor. The relationship between `US` and `ShelveLoc` is represented by a `mosaics plot`.
 
-```{r target_by5, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE}
+```{r target_by5, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE}
 plot(cat_cat)
 ```
 
@@ -408,7 +406,7 @@ summary(num_num)
 The figure on the left shows the scatter plot of `Sales` and `Price` and the confidence interval of the regression line and regression line. 
 The figure on the right shows the relationship between the original data and the predicted values of the linear model as a scatter plot. If there is a linear relationship between the two variables, the scatter plot of the observations converges on the red diagonal line.
 
-```{r target_by8, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE}
+```{r target_by8, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE}
 plot(num_num)
 ```
 
@@ -419,7 +417,7 @@ In `plot()`, the `hex_thres` argument provides a basis for drawing `hexabin plot
 
 The following example visualizes the `hexabin plot` rather than the scatter plot by specifying 350 for the `hex_thres` argument. This is because the number of observations is 400.
 
-```{r target_by8_2, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE}
+```{r target_by8_2, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE}
 plot(num_num, hex_thres = 350)
 ```
 
@@ -438,7 +436,7 @@ summary(num_cat)
 
 `plot()` visualizes the relationship between the target variable and the predictor. The relationship between `Sales` and `ShelveLoc` is represented by a `box plot`.
 
-```{r target_by10, fig.align='center', fig.width = 7, fig.height = 5, warning=FALSE}
+```{r target_by10, fig.align='center', fig.width = 6, fig.height = 4, warning=FALSE}
 plot(num_cat)
 ```
 
@@ -623,15 +621,10 @@ In this case, if the data size is large, the execution speed may be slow. It sup
 Copy the `carseats` data frame to the SQLite DBMS and create it as a table named `TB_CARSEATS`.
 Mysql/MariaDB, PostgreSQL, Oracle DBMS, other DBMS are also available for your environment. 
 
-```{r dbi_table, warning=FALSE, message=FALSE}
-if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
-if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
-if (!require(dplyr)) install.packages('dplyr', repos = "http://cran.us.r-project.org")
-if (!require(dbplyr)) install.packages('dbplyr', repos = "http://cran.us.r-project.org")
-
+```{r dbi_table, warning=FALSE, message=FALSE, eval=FALSE}
 library(dplyr)
 
-carseats <- ISLR::Carseats
+carseats <- Carseats
 carseats[sample(seq(NROW(carseats)), 20), "Income"] <- NA
 carseats[sample(seq(NROW(carseats)), 5), "Urban"] <- NA
 
@@ -646,7 +639,7 @@ copy_to(con_sqlite, carseats, name = "TB_CARSEATS", overwrite = TRUE)
 Use `dplyr::tbl()` to create a tbl_dbi object, then use it as a data frame object. That is, the data argument of all EDA function is specified as tbl_dbi object instead of data frame object.
 
 
-```{r dbi_describe}
+```{r dbi_describe, eval=FALSE}
 # Positive values select variables
 con_sqlite %>% 
   tbl("TB_CARSEATS") %>% 
@@ -675,7 +668,7 @@ con_sqlite %>%
 ```
 
 ### Test of normality on numeric columns using in the DBMS
-```{r dbi_normality}
+```{r dbi_normality, eval=FALSE}
 # Test all numerical variables by 'ShelveLoc' and 'US',
 # and extract only those with 'ShelveLoc' variable level is "Good".
 con_sqlite %>% 
@@ -707,7 +700,7 @@ con_sqlite %>%
 ```
 
 ### Normalization visualization of numerical column in the DBMS
-```{r plot_normality_dbi, fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE}
+```{r plot_normality_dbi, fig.align='center', fig.width = 6, fig.height = 4, eval=FALSE, eval=FALSE}
 # extract only those with 'ShelveLoc' variable level is "Good",
 # and plot 'Income' by 'US'
 # the result is same as a data.frame, but not display here. reference above in document.
@@ -719,7 +712,7 @@ con_sqlite %>%
 ```
 
 ### Compute the correlation coefficient between two columns of table in DBMS
-```{r dbi_correlation}
+```{r dbi_correlation, eval=FALSE}
 # Correlation coefficient
 # that eliminates redundant combination of variables
 con_sqlite %>% 
@@ -771,7 +764,7 @@ con_sqlite %>%
 ### EDA based on target variable
 The following is an EDA where the target column is character and the predictor column is a numeric type.
 
-```{r dbi_ctarget_by}
+```{r dbi_ctarget_by, eval=FALSE}
 # If the target variable is a categorical variable
 categ <- target_by(con_sqlite %>% tbl("TB_CARSEATS") , US)
 
