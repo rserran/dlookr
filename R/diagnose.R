@@ -244,10 +244,7 @@ diagnose_category <- function(.data, ...) {
 #' diagnose_category(jobchange)
 #' 
 #' # Select the variable to diagnose
-#' # diagnose_category(jobchange, education_level, company_type)
-#' # diagnose_category(jobchange, -education_level, -company_type)
-#' # diagnose_category(jobchange, "education_level", "company_type")
-#' # diagnose_category(jobchange, 7)
+#' diagnose_category(jobchange, education_level, company_type)
 #' 
 #' # Using pipes ---------------------------------
 #' library(dplyr)
@@ -263,14 +260,6 @@ diagnose_category <- function(.data, ...) {
 #' # Negative values to drop variables
 #' jobchange %>%
 #'   diagnose_category(-company_type, -job_chnge)
-#'   
-#' # Positions values select variables
-#' jobchange %>%
-#'   diagnose_category(7)
-#'   
-#' # Negative values to drop variables
-#' jobchange %>%
-#'   diagnose_category(-7)
 #'   
 #' # Top rank levels with top argument
 #' jobchange %>%
@@ -934,42 +923,15 @@ plot_outlier <- function(.data, ...) {
 #' # Visualization of all numerical variables
 #' plot_outlier(heartfailure)
 #' 
-#' # Select the variable to diagnose
-#' plot_outlier(heartfailure, cpk_enzyme, sodium)
-#' # plot_outlier(heartfailure, -cpk_enzyme, -sodium)
-#' # plot_outlier(heartfailure, "cpk_enzyme", "sodium")
-#' # plot_outlier(heartfailure, 7)
-#' 
-#' # Using the col argument
-#' # plot_outlier(heartfailure, cpk_enzyme, col = "gray")
+#' # Select the variable to diagnose using the col argument
+#' plot_outlier(heartfailure, cpk_enzyme, sodium, col = "gray")
 #' 
 #' # Not allow typographic argument
-#' # plot_outlier(heartfailure, cpk_enzyme, typographic = FALSE)
-#' 
-#' # Using pipes ---------------------------------
-#' library(dplyr)
-#' 
-#' # Visualization of all numerical variables
-#' heartfailure %>%
-#'   plot_outlier()
-#' 
-#' # Positive values select variables
-#' heartfailure %>%
-#'   plot_outlier(cpk_enzyme, sodium)
-#'   
-#' # Negative values to drop variables
-#' # heartfailure %>%
-#' #   plot_outlier(-cpk_enzyme, -sodium)
-#' 
-#' # Positions values select variables
-#' # heartfailure %>%
-#' #   plot_outlier(7)
-#' 
-#' # Negative values to drop variables
-#' # heartfailure %>%
-#' #   plot_outlier(-1, -5)
+#' plot_outlier(heartfailure, cpk_enzyme, typographic = FALSE)
 #' 
 #' # Using pipes & dplyr -------------------------
+#' library(dplyr)
+#' 
 #' # Visualization of numerical variables with a ratio of
 #' # outliers greater than 5%
 #' heartfailure %>%

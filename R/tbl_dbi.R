@@ -30,26 +30,27 @@
 #' }
 #'
 #' @param df a tbl_dbi.
-#'
 #' @return An object of data.frame.
 #' @export
 #' @examples
-#' \donttest{
 #' library(dplyr)
-#' ## connect DBMS
-#' #if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
-#' #if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
-#' #con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-#' #
-#' ## copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
-#' #copy_to(con_sqlite, heartfailure, name = "TB_HEARTFAILURE", overwrite = TRUE)
-#' #
-#' #con_sqlite %>% 
-#' #  tbl("TB_HEARTFAILURE") %>% 
-#' #  get_column_info
-#' #  
-#' ## Disconnect DBMS   
-#' #DBI::dbDisconnect(con_sqlite)
+#' 
+#' if (requireNamespace("DBI", quietly = TRUE) & requireNamespace("RSQLite", quietly = TRUE)) {
+#'   # connect DBMS
+#'   con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+#' 
+#'   # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
+#'   copy_to(con_sqlite, heartfailure, name = "TB_HEARTFAILURE", overwrite = TRUE)
+#' 
+#'   con_sqlite %>% 
+#'     tbl("TB_HEARTFAILURE") %>% 
+#'     get_column_info() %>%
+#'     print() 
+#'   
+#'   # Disconnect DBMS   
+#'   DBI::dbDisconnect(con_sqlite)
+#' } else {
+#'   cat("If you want to use this feature, you need to install the 'DBI' and 'RSQLite' package.\n")
 #' }
 #' 
 get_column_info <- function(df) {
@@ -120,56 +121,47 @@ get_column_info <- function(df) {
 #' \donttest{
 #' library(dplyr)
 #'
-#' ## connect DBMS
-#' #if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
-#' #if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
-#' #con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-#' #
-#' ## copy jobchange to the DBMS with a table named TB_JOBCHANGE
-#' #copy_to(con_sqlite, jobchange, name = "TB_JOBCHANGE", overwrite = TRUE)
-#' #
-#' ## Using pipes ---------------------------------
-#' ## Diagnosis of all columns
-#' #con_sqlite %>% 
-#' #  tbl("TB_JOBCHANGE") %>% 
-#' #  diagnose()
-#' #  
-#' ## Positive values select columns
-#' #con_sqlite %>% 
-#' #  tbl("TB_JOBCHANGE") %>% 
-#' #  diagnose(gender, education_level, company_size)
-#' #  
-#' ## Negative values to drop columns
-#' #con_sqlite %>% 
-#' #  tbl("TB_JOBCHANGE") %>% 
-#' #  diagnose(-gender, -education_level, -company_size)
-#' #  
-#' ## Positions values select columns, and In-memory mode
-#' #con_sqlite %>% 
-#' #  tbl("TB_JOBCHANGE") %>% 
-#' #  diagnose(1, 3, 8, in_database = FALSE)
-#' #  
-#' ## Positions values select columns, and In-memory mode and collect size is 200
-#' #con_sqlite %>% 
-#' #  tbl("TB_JOBCHANGE") %>% 
-#' #  diagnose(-8, -9, -10, in_database = FALSE, collect_size = 200)
+#' if (requireNamespace("DBI", quietly = TRUE) & requireNamespace("RSQLite", quietly = TRUE)) {
+#'   # connect DBMS
+#'   con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+#' 
+#'   # copy jobchange to the DBMS with a table named TB_JOBCHANGE
+#'   copy_to(con_sqlite, jobchange, name = "TB_JOBCHANGE", overwrite = TRUE)
+#' 
+#'   # Using pipes ---------------------------------
+#'   # Diagnosis of all columns
+#'   con_sqlite %>% 
+#'     tbl("TB_JOBCHANGE") %>% 
+#'     diagnose() %>% 
+#'     print()
+#'   
+#'   # Positions values select columns, and In-memory mode and collect size is 200
+#'   con_sqlite %>% 
+#'     tbl("TB_JOBCHANGE") %>% 
+#'     diagnose(gender, education_level, company_size, in_database = FALSE, collect_size = 200) %>% 
+#'     print()
 #'
-#' ## Using pipes & dplyr -------------------------
-#' ## Diagnosis of missing variables
-#' #con_sqlite %>% 
-#' #  tbl("TB_JOBCHANGE") %>% 
-#' #  diagnose() %>%
-#' #  filter(missing_count > 0)
-#' #  
-#' ## Using pipes & dplyr -------------------------
-#' ## Diagnosis of missing variables
-#' #con_sqlite %>% 
-#' #  tbl("TB_JOBCHANGE") %>% 
-#' #  group_by(job_chnge) %>% 
-#' #  diagnose()
-#' #  
-#' ## Disconnect DBMS   
-#' #DBI::dbDisconnect(con_sqlite)
+#'   # Using pipes & dplyr -------------------------
+#'   # Diagnosis of missing variables
+#'   con_sqlite %>% 
+#'     tbl("TB_JOBCHANGE") %>% 
+#'     diagnose() %>%
+#'     filter(missing_count > 0) %>% 
+#'     print()
+#'   
+#'   # Using pipes & dplyr -------------------------
+#'   # Diagnosis of missing variables
+#'   con_sqlite %>% 
+#'     tbl("TB_JOBCHANGE") %>% 
+#'     group_by(job_chnge) %>% 
+#'     diagnose() %>% 
+#'     print()
+#'  
+#'   # Disconnect DBMS   
+#'   DBI::dbDisconnect(con_sqlite)
+#' } else {
+#'   cat("If you want to use this feature, you need to install the 'DBI' and 'RSQLite' package.\n")
+#' }
 #' }
 #'    
 diagnose.tbl_dbi <- function(.data, ..., in_database = TRUE, 
@@ -1094,58 +1086,55 @@ normality.tbl_dbi <- function(.data, ..., sample = 5000,
 #' \donttest{
 #' library(dplyr)
 #' 
-#' ## connect DBMS
-#' #if (!require(DBI)) install.packages('DBI', repos = "http://cran.us.r-project.org")
-#' #if (!require(RSQLite)) install.packages('RSQLite', repos = "http://cran.us.r-project.org")
-#' #con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-#' #
-#' ## copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
-#' #copy_to(con_sqlite, heartfailure, name = "TB_HEARTFAILURE", overwrite = TRUE)
+#' if (requireNamespace("DBI", quietly = TRUE) & requireNamespace("RSQLite", quietly = TRUE)) {
+#'   # connect DBMS
+#'   con_sqlite <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+#' 
+#'   # copy heartfailure to the DBMS with a table named TB_HEARTFAILURE
+#'   copy_to(con_sqlite, heartfailure, name = "TB_HEARTFAILURE", overwrite = TRUE)
 #'
-#' ## Using pipes ---------------------------------
-#' ## Visualization of all numerical variables
-#' #con_sqlite %>% 
-#' #  tbl("TB_HEARTFAILURE") %>% 
-#' #  plot_normality()
+#'   # Using pipes ---------------------------------
+#'   # Visualization of all numerical variables
+#'   con_sqlite %>% 
+#'     tbl("TB_HEARTFAILURE") %>% 
+#'     plot_normality()
 #'
-#' ## Positive values select variables, and In-memory mode and collect size is 200
-#' #con_sqlite %>% 
-#' #  tbl("TB_HEARTFAILURE") %>% 
-#' #  plot_normality(platelets, sodium, collect_size = 200)
+#'   # Positive values select variables, and In-memory mode and collect size is 200
+#'   con_sqlite %>% 
+#'     tbl("TB_HEARTFAILURE") %>% 
+#'   plot_normality(platelets, sodium, collect_size = 200)
 #'
-#' ## Positions values select variables
-#' #con_sqlite %>% 
-#' #  tbl("TB_HEARTFAILURE") %>% 
-#' #  plot_normality(1)
+#'   # Not allow the typographic elements
+#'   con_sqlite %>% 
+#'     tbl("TB_HEARTFAILURE") %>% 
+#'     plot_normality(1, typographic = FALSE)
+#'     
+#'   # Using pipes & dplyr -------------------------
+#'   # Plot 'sodium' variable by 'smoking' and 'death_event'
+#'   con_sqlite %>% 
+#'     tbl("TB_HEARTFAILURE") %>% 
+#'     group_by(smoking, death_event) %>%
+#'     plot_normality(sodium)
 #'
-#' ## Not allow the typographic elements
-#' #con_sqlite %>% 
-#' #  tbl("TB_HEARTFAILURE") %>% 
-#' #  plot_normality(1, typographic = FALSE)
-#' #  
-#' ## Using pipes & dplyr -------------------------
-#' ## Plot 'sodium' variable by 'smoking' and 'death_event'
-#' #con_sqlite %>% 
-#' #  tbl("TB_HEARTFAILURE") %>% 
-#' #  group_by(smoking, death_event) %>%
-#' #  plot_normality(sodium)
+#'   # Plot using left and right arguments
+#'   con_sqlite %>% 
+#'     tbl("TB_HEARTFAILURE") %>% 
+#'     group_by(smoking, death_event) %>%
+#'     plot_normality(sodium, left = "Box-Cox", right = "log")
 #'
-#' ## Plot using left and right arguments
-#' #con_sqlite %>% 
-#' #  tbl("TB_HEARTFAILURE") %>% 
-#' #  group_by(smoking, death_event) %>%
-#' #  plot_normality(sodium, left = "Box-Cox", right = "log")
-#'
-#' ## extract only those with 'smoking' variable level is "Yes",
-#' ## and plot 'sodium' by 'death_event'
-#' #con_sqlite %>% 
-#' #  tbl("TB_HEARTFAILURE") %>% 
-#' #  filter(smoking == "Yes") %>%
-#' #  group_by(death_event) %>%
-#' #  plot_normality(sodium)
-#' #  
-#' ## Disconnect DBMS   
-#' #DBI::dbDisconnect(con_sqlite)
+#'   # extract only those with 'smoking' variable level is "Yes",
+#'   # and plot 'sodium' by 'death_event'
+#'   con_sqlite %>% 
+#'     tbl("TB_HEARTFAILURE") %>% 
+#'     filter(smoking == "Yes") %>%
+#'     group_by(death_event) %>%
+#'     plot_normality(sodium)
+#'     
+#'   # Disconnect DBMS   
+#'   DBI::dbDisconnect(con_sqlite)
+#' } else {
+#'   cat("If you want to use this feature, you need to install the 'DBI' and 'RSQLite' package.\n")
+#' }
 #' }
 #' 
 plot_normality.tbl_dbi <- function(.data, ..., in_database = FALSE, collect_size = Inf, 
