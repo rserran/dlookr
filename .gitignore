@@ -25,12 +25,11 @@ doc
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-.Rproj.user
-dlookr.Rproj
+#.Rproj.user
 .DS_Store
-README.Rmd
-.gitignore
-_pkgdown.yml
+#README.Rmd
+#.gitignore
+#_pkgdown.yml
 *.csv
 *.bak
 /doc/
