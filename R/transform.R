@@ -220,7 +220,7 @@ print.transform <- function(x, ...) {
 #' 
 #' @param x an object of class "transform", usually, a result of a call to transform().
 #' @param typographic logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
-#' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package.
+#' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements.
 #' @param base_family character. The name of the base font family to use 
 #' for the visualization. If not specified, the font defined in dlookr is applied. (See details)
 #' @param ... arguments to be passed to methods, such as graphical parameters (see par).
@@ -246,7 +246,6 @@ print.transform <- function(x, ...) {
 #' 
 #' @method plot transform
 #' @import ggplot2
-#' @import hrbrthemes
 #' @importFrom tidyr gather
 #' @importFrom gridExtra grid.arrange
 #' @export
@@ -338,7 +337,7 @@ plot.transform <- function(x, typographic = TRUE, base_family = NULL, ...) {
 #'
 #' See vignette("transformation") for an introduction to these concepts.
 #'
-#' @param .data a data.frame or a \code{\link{tbl_df}}.
+#' @param .data a data.frame or a \code{\link[tibble]{tbl_df}}.
 #' @param target target variable. If the target variable is not specified,
 #' the method of using the target variable information is not performed when
 #' the missing value is imputed. and Optimal binning is not performed if the

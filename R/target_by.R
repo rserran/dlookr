@@ -19,12 +19,12 @@ target_by <- function(.data, target, ...) {
 #'  between the target variable and its corresponding variable.
 #'  Based on the derived relationships, analysts create scenarios for data analysis.
 #'
-#'  target_by() inherits the \code{\link{grouped_df}} class and returns a target_df
+#'  target_by() inherits the \code{\link[dplyr]{grouped_df}} class and returns a target_df
 #'  class containing information about the target variable and the variable.
 #'
 #' See vignette("EDA") for an introduction to these concepts.
 #'
-#' @param .data a data.frame or a \code{\link{tbl_df}}.
+#' @param .data a data.frame or a \code{\link[tibble]{tbl_df}}.
 #' @param target target variable.
 #' @param ... arguments to be passed to methods.
 #' @return an object of target_df class.
@@ -475,7 +475,7 @@ print.relate <- function(x, ...) {
 #' @param pal Color palette to paint hexabin. Use only when the target and predictor are numeric variables.
 #' Applied only when the number of observations is greater than hex_thres.
 #' @param typographic logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
-#' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package.
+#' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements.
 #' @param base_family character. The name of the base font family to use 
 #' for the visualization. If not specified, the font defined in dlookr is applied. (See details)
 #' @param ... arguments to be passed to methods, such as graphical parameters (see par).
@@ -524,7 +524,6 @@ print.relate <- function(x, ...) {
 #'   
 #' @method plot relate
 #' @import ggplot2
-#' @import hrbrthemes
 #' @importFrom gridExtra grid.arrange
 #' @importFrom stats complete.cases var
 #' @importFrom graphics plot

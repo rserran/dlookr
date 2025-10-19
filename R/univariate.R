@@ -37,7 +37,7 @@ univar_numeric <- function(.data, ...) {
 #' \item variables : character. List of variables selected for calculate frequency.
 #' }
 #' 
-#' @param .data a data.frame or a \code{\link{tbl_df}}.
+#' @param .data a data.frame or a \code{\link[tibble]{tbl_df}}.
 #' @param ... one or more unquoted expressions separated by commas.
 #' You can treat variable names like they are positions.
 #' Positive values select variables; negative values to drop variables.
@@ -165,11 +165,11 @@ univar_category_impl <- function(df, vars) {
 #' @section Attributes of return object:
 #' Attributes of compare_category class is as follows.
 #' \itemize{
-#' \item raw : a data.frame or a \code{\link{tbl_df}}. Data containing variables to be compared. Save it for visualization with plot.univar_numeric().
+#' \item raw : a data.frame or a \code{\link[tibble]{tbl_df}}. Data containing variables to be compared. Save it for visualization with plot.univar_numeric().
 #' \item variables : character. List of variables selected for calculate statistics.
 #' }
 #' 
-#' @param .data a data.frame or a \code{\link{tbl_df}}.
+#' @param .data a data.frame or a \code{\link[tibble]{tbl_df}}.
 #' @param ... one or more unquoted expressions separated by commas.
 #' You can treat variable names like they are positions.
 #' Positive values select variables; negative values to drop variables.
@@ -502,7 +502,7 @@ print.univar_numeric <- function(x, ...) {
 #' @param na.rm logical. Specifies whether to include NA when plotting bar plot. 
 #' The default is FALSE, so plot NA.  
 #' @param typographic logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
-#' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package.
+#' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements.
 #' @param base_family character. The name of the base font family to use 
 #' for the visualization. If not specified, the font defined in dlookr is applied. (See details)
 #' @param ... arguments to be passed to methods, such as graphical parameters (see par).
@@ -614,7 +614,7 @@ plot.univar_category <- function(x, na.rm = TRUE, prompt = FALSE,
 #' @param prompt logical. The default value is FALSE. If there are multiple visualizations to be output, 
 #' if this argument value is TRUE, a prompt is output each time. 
 #' @param typographic logical. Whether to apply focuses on typographic elements to ggplot2 visualization. 
-#' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements using hrbrthemes package. 
+#' The default is TRUE. if TRUE provides a base theme that focuses on typographic elements. 
 #' @param base_family character. The name of the base font family to use 
 #' for the visualization. If not specified, the font defined in dlookr is applied. (See details)
 #' @param ... arguments to be passed to methods, such as graphical parameters (see par).
